@@ -23,19 +23,9 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-
-        val db = Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java, "user.db"
-        ).build()
-
-        doAsync {
-            Log.d("dbg", "${LocalDateTime.now()}")
-            db.dao().insertRun(History(0, "${LocalDateTime.now()}", 100, 5000))
-            val data = db.dao().getAllHistory()
-
-            Log.d("dbg", data.toString())
-
+        btn_openProfile.setOnClickListener {
+            val intent = Intent(this, ProfileActivity::class.java)
+            startActivity(intent)
         }
 
 
