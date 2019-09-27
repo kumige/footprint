@@ -67,9 +67,9 @@ interface dao {
     @Insert
     fun insertRun(data: History)
 
-    /*@Delete
-    fun delete(todo: TodoEntity)
+    @Delete
+    fun deleteFromHistory(vararg history: History)
 
-    @Update
-    fun updateTodo(vararg todos: TodoEntity)*/
+    //@Update
+    //fun updateTodo(vararg todos: TodoEntity)*/
 }

@@ -50,7 +50,6 @@ class HistoryRecyclerAdapter(private val history: List<History>
         override fun onClick(v: View) {
             Log.d("dbg", "history item clicked")
 
-
             /* TODO: show single history item
             val context = itemView.context
             val showHistoryIntent = Intent(context, SingleRunActivity::class.java)

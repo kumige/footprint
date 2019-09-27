@@ -36,7 +36,9 @@ class ProfileActivity : AppCompatActivity() {
         ).build()
 
         doAsync {
-            //db.dao().insertRun(History(0, "${LocalDateTime.now()}", 100, 5000))
+            var string = db.dao().getAllHistory()
+            Log.d("DBG","${string}")
+            //db.dao().insertRun(History(20, "${LocalDateTime.now()}", 100, 7000))
             name = db.dao().getUsername()
             history = db.dao().getAllHistory()
 
