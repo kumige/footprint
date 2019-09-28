@@ -5,9 +5,9 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Bundle
-import android.os.Looper
+import android.os.*
 import android.preference.PreferenceManager
 import android.util.Log
 import android.view.View
@@ -25,13 +25,11 @@ import org.osmdroid.views.overlay.Marker
 const val PERMISSON_CODE = 124
 const val PRIORITY_HIGH_ACCURACY = 100
 
-class MapActivity : AppCompatActivity() {
+class MapActivity : AppCompatActivity(), TrackingHandler.AppReceiver {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var locationCallback: LocationCallback
-    private lateinit var locationRequest: LocationRequest
+    private lateinit var handler: TrackingHandler
     private var requestingLocationUpdates = false
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +42,9 @@ class MapActivity : AppCompatActivity() {
         actionbar.setDisplayHomeAsUpEnabled(true)
         actionbar.setDisplayHomeAsUpEnabled(true)
 
+        btn_startRun.setOnClickListener { startRun() }
+        btn_stopRun.setOnClickListener { stopRun() }
+
         // Map
         val ctx = applicationContext
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx))
@@ -52,60 +53,47 @@ class MapActivity : AppCompatActivity() {
         map.setMultiTouchControls(true)
         map.controller.setZoom(18.0)
 
-        // Current location
+        // Set starting location before tracking
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         fusedLocationClient.lastLocation.addOnCompleteListener(this) { task ->
             if (task.isSuccessful && task.result != null) {
                 val startPoint = GeoPoint(task.result!!.latitude, task.result!!.longitude)
                 map.controller.setCenter(startPoint)
-                Log.d(
-                    "GEOLOCATION",
-                    "latitude: ${task.result?.latitude} and longitude: ${task.result?.longitude}"
-                )
+                setMarker(startPoint)
             }
         }
+    }
 
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult?) {
-                locationResult ?: return
-                if (requestingLocationUpdates) {
-                    for (location in locationResult.locations) {
-                        // Update UI with location data
-                        val geoPoint = GeoPoint(location.latitude, location.longitude)
-                        Log.d("dbg", "$geoPoint")
+    override fun onReceiveResult(message: Message?) {
+        Log.d("dbg", "MapActivity: ${message?.obj}")
+        val geoPoint = message?.obj as GeoPoint
 
-                        if (map.overlays.isNotEmpty()) {
-                            //Remove old marker
-                            map.overlays.clear()
-                            map.invalidate()
-                            Log.d("dbg", "marker removed")
-                        }
-
-                        //Create and set new marker on updated location
-                        val marker = Marker(map)
-                        marker.position = geoPoint
-                        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                        map.overlays.add(marker)
-                        Log.d("dbg", "marker added")
-                        map.controller.animateTo(geoPoint)
-                    }
-                }
-
-
-            }
+        if (map.overlays.isNotEmpty()) {
+            //Remove old marker
+            map.overlays.clear()
+            map.invalidate()
+            Log.d("dbg", "marker removed")
         }
 
-        locationRequest = LocationRequest()
-        locationRequest.interval = 5000
-        locationRequest.priority = PRIORITY_HIGH_ACCURACY
+        setMarker(geoPoint)
+        map.controller.animateTo(geoPoint)
+    }
+
+    // Set a marker on given location
+    private fun setMarker(geoPoint: GeoPoint) {
+        if (requestingLocationUpdates) {
+            val marker = Marker(map)
+            marker.position = geoPoint
+            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+            map.overlays.add(marker)
+        }
     }
 
     override fun onResume() {
         super.onResume()
         requestingLocationUpdates = true
-        if (requestingLocationUpdates) startLocationUpdates()
-        //if (checkLocationPermission()) startNavService()
+        //if (checkLocationPermission()) startRun()
     }
 
     override fun onPause() {
@@ -113,45 +101,29 @@ class MapActivity : AppCompatActivity() {
         requestingLocationUpdates = false
     }
 
-    private fun startLocationUpdates() {
-        fusedLocationClient.requestLocationUpdates(
-            locationRequest,
-            locationCallback,
-            Looper.getMainLooper()
-        )
-    }
-
-    private fun startNavService() {
-
-    }
-
-    private fun checkLocationPermission(): Boolean {
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    this,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                )
-            ) {
-            } else {
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                    PERMISSON_CODE
-                )
-
-            }
-        } else {
-            // Location permission granted
-            return true
+    override fun onDestroy() {
+        super.onDestroy()
+        if (map.overlays.isNotEmpty()) {
+            //Remove old marker
+            map.overlays.clear()
+            map.invalidate()
         }
-        // No location permission
-        return false
+        Log.d("dbg", "MapActivity onDestroy")
     }
 
+    private fun startRun() {
+        requestingLocationUpdates = true
+        val intent = Intent(this, NavigationService::class.java)
+        handler = TrackingHandler(this)
+        intent.putExtra("handler", Messenger(handler))
+        startService(intent)
+    }
+
+    private fun stopRun() {
+        requestingLocationUpdates = false
+        val intent = Intent(this, NavigationService::class.java)
+        stopService(intent)
+    }
 
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
