@@ -67,17 +67,27 @@ class MapActivity : AppCompatActivity(), TrackingHandler.AppReceiver {
 
     override fun onReceiveResult(message: Message?) {
         Log.d("dbg", "MapActivity: ${message?.obj}")
-        val geoPoint = message?.obj as GeoPoint
+        when(message?.what) {
+            0 -> {
+                val geoPoint = message.obj as GeoPoint
 
-        if (map.overlays.isNotEmpty()) {
-            //Remove old marker
-            map.overlays.clear()
-            map.invalidate()
-            Log.d("dbg", "marker removed")
+                if (map.overlays.isNotEmpty()) {
+                    //Remove old marker
+                    map.overlays.clear()
+                    map.invalidate()
+                    Log.d("dbg", "marker removed")
+                }
+
+                setMarker(geoPoint)
+                map.controller.animateTo(geoPoint)
+            }
+            1 -> {
+
+                val time = message.obj as Int
+                textView_time.text = time.toString()
+            }
         }
 
-        setMarker(geoPoint)
-        map.controller.animateTo(geoPoint)
     }
 
     // Set a marker on given location

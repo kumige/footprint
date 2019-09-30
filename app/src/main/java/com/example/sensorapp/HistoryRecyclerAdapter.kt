@@ -1,7 +1,6 @@
 package com.example.sensorapp
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -39,12 +38,14 @@ class HistoryRecyclerAdapter(private val history: List<History>
 
         @SuppressLint("SetTextI18n")
         fun bindPhoto(historyItem: History) {
-            val date = historyItem.date.split("T")
+            val date = historyItem.startTime.split("T")
             val time = date[1].slice(0..4)
+            val route = DbTypeConverters().stringToGeoPointList(historyItem.route)
 
             view.textView_date.text = "${date[0]} $time"
-            view.textView_duration.text = "${historyItem.length}m"
+            view.textView_distance.text = "${historyItem.distance}m"
             view.textView_time.text = "${historyItem.duration}s"
+            view.textView_dbgroute.text = "$route"
         }
 
         override fun onClick(v: View) {

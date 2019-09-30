@@ -3,6 +3,10 @@ package com.example.sensorapp
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import androidx.room.TypeConverters
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import org.osmdroid.util.GeoPoint
 import org.threeten.bp.format.DateTimeFormatter
 import java.sql.Date
 import java.sql.Time
@@ -10,6 +14,10 @@ import java.sql.Timestamp
 import java.text.DateFormat
 import java.time.LocalDate
 import java.time.OffsetDateTime
+import java.util.*
+import java.util.Collections.emptyList
+
+
 
 @Database(
     entities = [User::class, History::class],
@@ -44,10 +52,13 @@ data class User(
 data class History(
     @PrimaryKey(autoGenerate = true)
     var id: Int,
-    @ColumnInfo(name = "date") var date: String,
+    @ColumnInfo(name = "start_time") var startTime: String,
+    @ColumnInfo(name = "end_time") var endTime: String,
     @ColumnInfo(name = "duration") var duration: Int,
-    @ColumnInfo(name = "length") var length: Int
-    //Kartta?
+    @ColumnInfo(name = "distance") var distance: Int,
+    @TypeConverters(DbTypeConverters::class)
+    @ColumnInfo(name = "route") var route: String
+
 )
 
 @Dao
@@ -72,4 +83,26 @@ interface dao {
 
     //@Update
     //fun updateTodo(vararg todos: TodoEntity)*/
+}
+
+class DbTypeConverters {
+    private val gson = Gson()
+
+    @TypeConverter
+    fun stringToGeoPointList(data: String?): List<GeoPoint> {
+        if (data == null) {
+            return emptyList()
+        }
+
+        val listType = object : TypeToken<List<GeoPoint>>() {
+
+        }.type
+
+        return gson.fromJson(data, listType)
+    }
+
+    @TypeConverter
+    fun geoPointListToString(list: List<GeoPoint>): String {
+        return gson.toJson(list)
+    }
 }

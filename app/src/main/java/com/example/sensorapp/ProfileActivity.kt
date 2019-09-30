@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Dao
 import androidx.room.Room
 import kotlinx.android.synthetic.main.activity_profile.*
+import kotlinx.android.synthetic.main.rv_history_row.*
 import org.jetbrains.anko.doAsync
 import java.time.LocalDateTime
 
@@ -37,6 +38,7 @@ class ProfileActivity : AppCompatActivity() {
 
         doAsync {
             //db.dao().insertRun(History(0, "${LocalDateTime.now()}", 344, 1337))
+            db.dao().insertName(User(0,"Mikko"))
 
             name = db.dao().getUsername()
             history = db.dao().getAllHistory()

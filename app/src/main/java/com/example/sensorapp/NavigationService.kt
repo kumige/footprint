@@ -1,24 +1,23 @@
 package com.example.sensorapp
 
-import android.Manifest
 import android.app.*
-import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.location.Location
 import android.os.*
-import android.preference.PreferenceManager
-import android.telephony.ServiceState
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.room.Room
 import com.google.android.gms.location.*
-import kotlinx.android.synthetic.main.activity_map.*
-import org.osmdroid.config.Configuration
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.jetbrains.anko.doAsync
+import org.osmdroid.util.Distance
 import org.osmdroid.util.GeoPoint
-import org.osmdroid.views.overlay.Marker
+import org.threeten.bp.LocalDateTime
+import java.lang.Exception
+import kotlin.math.sqrt
 
 const val CHANNEL_ID = "channel_01"
+const val LOCATION_UPDATE = 0
+const val TIMER_UPDATE = 1
 
 class NavigationService : Service() {
 
@@ -26,6 +25,12 @@ class NavigationService : Service() {
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
     private var messenger: Messenger? = null
+    private var trackedPoints = mutableListOf<GeoPoint>()
+    private lateinit var startTime: LocalDateTime
+    private lateinit var endTime: LocalDateTime
+    private var runTime = 0
+    private lateinit var timerThread: Thread
+    private var timerIsRunning = false
 
     override fun onCreate() {
         super.onCreate()
@@ -56,24 +61,26 @@ class NavigationService : Service() {
 
         startForeground(1, notification)
 
+        startTime = LocalDateTime.now()
+        startTimer()
 
-        // Current location
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
-        Log.d("dbg", "requesting location")
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
                 locationResult ?: return
-                    for (location in locationResult.locations) {
-                        // Update UI with location data
-                        val geoPoint = GeoPoint(location.latitude, location.longitude)
-                        Log.d("dbg", "$geoPoint")
+                for (location in locationResult.locations) {
+                    // Update UI with location data
+                    val geoPoint = GeoPoint(location.latitude, location.longitude)
+                    Log.d("dbg", "$geoPoint")
 
-                        val msg = Message()
-                        msg.obj = geoPoint
-                        msg.what = 0
-                        messenger?.send(msg)
-                    }
+                    // Send location update to UI thread
+                    trackedPoints.add(geoPoint)
+                    val msg = Message()
+                    msg.obj = geoPoint
+                    msg.what = LOCATION_UPDATE
+                    messenger?.send(msg)
+                }
             }
         }
 
@@ -81,6 +88,7 @@ class NavigationService : Service() {
         locationRequest.interval = 5000
         locationRequest.priority = PRIORITY_HIGH_ACCURACY
 
+        // Start requesting location updates
         fusedLocationClient.requestLocationUpdates(
             locationRequest,
             locationCallback,
@@ -88,15 +96,82 @@ class NavigationService : Service() {
         )
     }
 
+    // Starts the timer in a new thread
+    private fun startTimer() {
+        timerThread = Thread {
+            Looper.prepare()
+            timerIsRunning = true
+            while (timerIsRunning) {
+                try {
+                    Thread.sleep(1000)
+                } catch (e: Exception) {
+                    Thread.currentThread().interrupt()
+                    Log.d("dbg", "$e")
+                }
+                if (timerIsRunning) {
+                    runTime++
+                    val msg = Message()
+                    msg.obj = runTime
+                    msg.what = TIMER_UPDATE
+                    messenger?.send(msg)
+                }
+            }
+        }
+        timerThread.start()
+    }
+
+    // Service killed, run ends here and it is added to database
     override fun onDestroy() {
         super.onDestroy()
+
+        timerIsRunning = false
         fusedLocationClient.removeLocationUpdates(locationCallback)
+
+        Log.d("dbg", "${trackedPoints[0]}")
+        Log.d("dbg", "$trackedPoints")
+
+
+        // Calculate distance https://stackoverflow.com/a/4339615
+        var totalDistance = 0.0
+        var next = 1
+        for (geoPoint in trackedPoints) {
+            if (geoPoint != trackedPoints.last()) {
+                val nextPoint = trackedPoints[next]
+
+                val pointA = Location("")
+                pointA.latitude = geoPoint.latitude
+                pointA.longitude = geoPoint.longitude
+
+                val pointB = Location("")
+                pointA.latitude = nextPoint.latitude
+                pointA.longitude = nextPoint.longitude
+
+                //totalDistance += Location.distanceBetween(geoPoint.latitude, geoPoint.longitude, nextPoint.latitude, nextPoint.longitude, "")
+                next++
+            }
+        }
+
+        val distance = if (totalDistance > 1.0) {
+            totalDistance.toInt()
+        } else {
+            1
+        }
+
+        endTime = LocalDateTime.now()
+        val db = Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java, "user.db"
+        ).build()
+        // Convert tracked route to json string
+        val route = DbTypeConverters().geoPointListToString(trackedPoints)
+        doAsync {
+            db.dao().insertRun(History(0, "$startTime", "$endTime", runTime, distance, route))
+            runTime = 0
+        }
         Log.d("dbg", "nav service ondestroy")
     }
 
     private fun createNotificationChannel() {
-        Log.d("dbg", "location permission granted")
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 CHANNEL_ID,
