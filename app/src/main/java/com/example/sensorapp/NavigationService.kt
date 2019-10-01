@@ -14,10 +14,21 @@ import org.osmdroid.util.GeoPoint
 import org.threeten.bp.LocalDateTime
 import java.lang.Exception
 import kotlin.math.sqrt
+import androidx.core.content.ContextCompat.getSystemService
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import kotlin.math.cos
+import androidx.core.content.ContextCompat.getSystemService
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import kotlin.math.asin
+import kotlin.math.sin
+import androidx.core.content.ContextCompat.getSystemService
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+
 
 const val CHANNEL_ID = "channel_01"
 const val LOCATION_UPDATE = 0
 const val TIMER_UPDATE = 1
+const val DISTANCE_UPDATE = 2
 
 class NavigationService : Service() {
 
@@ -26,6 +37,8 @@ class NavigationService : Service() {
     private lateinit var locationRequest: LocationRequest
     private var messenger: Messenger? = null
     private var trackedPoints = mutableListOf<GeoPoint>()
+    private lateinit var previousPoint: GeoPoint
+    private var totalDistance = 0.0
     private lateinit var startTime: LocalDateTime
     private lateinit var endTime: LocalDateTime
     private var runTime = 0
@@ -74,12 +87,30 @@ class NavigationService : Service() {
                     val geoPoint = GeoPoint(location.latitude, location.longitude)
                     Log.d("dbg", "$geoPoint")
 
+                    if (::previousPoint.isInitialized) {
+                        val locA = Location("")
+                        locA.latitude = geoPoint.latitude
+                        locA.longitude = geoPoint.longitude
+
+                        val locB = Location("")
+                        locB.latitude = previousPoint.latitude
+                        locB.longitude = previousPoint.longitude
+
+                        totalDistance += locA.distanceTo(locB)
+                    }
+                    previousPoint = geoPoint
+
                     // Send location update to UI thread
                     trackedPoints.add(geoPoint)
                     val msg = Message()
                     msg.obj = geoPoint
                     msg.what = LOCATION_UPDATE
                     messenger?.send(msg)
+
+                    val distanceMsg = Message()
+                    distanceMsg.obj = totalDistance.toInt()
+                    distanceMsg.what = DISTANCE_UPDATE
+                    messenger?.send(distanceMsg)
                 }
             }
         }
@@ -130,26 +161,29 @@ class NavigationService : Service() {
         Log.d("dbg", "${trackedPoints[0]}")
         Log.d("dbg", "$trackedPoints")
 
-
-        // Calculate distance https://stackoverflow.com/a/4339615
-        var totalDistance = 0.0
+        /*var totalDistance = 0.0
         var next = 1
         for (geoPoint in trackedPoints) {
             if (geoPoint != trackedPoints.last()) {
                 val nextPoint = trackedPoints[next]
 
-                val pointA = Location("")
-                pointA.latitude = geoPoint.latitude
-                pointA.longitude = geoPoint.longitude
+                val locA = Location("")
+                locA.latitude = geoPoint.latitude
+                locA.longitude = geoPoint.longitude
 
-                val pointB = Location("")
-                pointA.latitude = nextPoint.latitude
-                pointA.longitude = nextPoint.longitude
+                val locB = Location("")
+                locB.latitude = nextPoint.latitude
+                locB.longitude = nextPoint.longitude
 
-                //totalDistance += Location.distanceBetween(geoPoint.latitude, geoPoint.longitude, nextPoint.latitude, nextPoint.longitude, "")
+                totalDistance += locA.distanceTo(locB)
                 next++
             }
         }
+        */
+
+        Log.d("dbg", "trackedPoints size: ${trackedPoints.size}")
+        Log.d("dbg", "totalDistance: $totalDistance")
+
 
         val distance = if (totalDistance > 1.0) {
             totalDistance.toInt()
@@ -158,10 +192,12 @@ class NavigationService : Service() {
         }
 
         endTime = LocalDateTime.now()
+
         val db = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java, "user.db"
         ).build()
+
         // Convert tracked route to json string
         val route = DbTypeConverters().geoPointListToString(trackedPoints)
         doAsync {

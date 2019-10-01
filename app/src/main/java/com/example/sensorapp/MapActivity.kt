@@ -86,6 +86,10 @@ class MapActivity : AppCompatActivity(), TrackingHandler.AppReceiver {
                 val time = message.obj as Int
                 textView_time.text = time.toString()
             }
+            2 -> {
+                val distance = message.obj as Int
+                textView_distance.text = "$distance m"
+            }
         }
 
     }
