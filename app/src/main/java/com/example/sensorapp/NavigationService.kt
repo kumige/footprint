@@ -102,10 +102,10 @@ class NavigationService : Service() {
 
                     // Send location update to UI thread
                     trackedPoints.add(geoPoint)
-                    val msg = Message()
-                    msg.obj = geoPoint
-                    msg.what = LOCATION_UPDATE
-                    messenger?.send(msg)
+                    val locationMsg = Message()
+                    locationMsg.obj = geoPoint
+                    locationMsg.what = LOCATION_UPDATE
+                    messenger?.send(locationMsg)
 
                     val distanceMsg = Message()
                     distanceMsg.obj = totalDistance.toInt()
@@ -158,32 +158,8 @@ class NavigationService : Service() {
         timerIsRunning = false
         fusedLocationClient.removeLocationUpdates(locationCallback)
 
-        Log.d("dbg", "${trackedPoints[0]}")
-        Log.d("dbg", "$trackedPoints")
-
-        /*var totalDistance = 0.0
-        var next = 1
-        for (geoPoint in trackedPoints) {
-            if (geoPoint != trackedPoints.last()) {
-                val nextPoint = trackedPoints[next]
-
-                val locA = Location("")
-                locA.latitude = geoPoint.latitude
-                locA.longitude = geoPoint.longitude
-
-                val locB = Location("")
-                locB.latitude = nextPoint.latitude
-                locB.longitude = nextPoint.longitude
-
-                totalDistance += locA.distanceTo(locB)
-                next++
-            }
-        }
-        */
-
         Log.d("dbg", "trackedPoints size: ${trackedPoints.size}")
         Log.d("dbg", "totalDistance: $totalDistance")
-
 
         val distance = if (totalDistance > 1.0) {
             totalDistance.toInt()

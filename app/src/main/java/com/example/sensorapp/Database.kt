@@ -1,20 +1,13 @@
 package com.example.sensorapp
 
 import android.content.Context
+import android.os.Parcelable
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import androidx.room.TypeConverters
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import org.osmdroid.util.GeoPoint
-import org.threeten.bp.format.DateTimeFormatter
-import java.sql.Date
-import java.sql.Time
-import java.sql.Timestamp
-import java.text.DateFormat
-import java.time.LocalDate
-import java.time.OffsetDateTime
-import java.util.*
 import java.util.Collections.emptyList
 
 
@@ -105,4 +98,5 @@ class DbTypeConverters {
     fun geoPointListToString(list: List<GeoPoint>): String {
         return gson.toJson(list)
     }
+
 }

@@ -21,6 +21,7 @@
         android:id="@+id/textView_distance"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:text="0.00 km"
         android:textAlignment="center"
         android:textColor="#F2000000"
         android:textSize="36sp"
@@ -32,10 +33,10 @@
         android:id="@+id/textView_time"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="0s"
+        android:text="00:00:00"
         android:textAlignment="center"
         android:textColor="#F2000000"
-        android:textSize="36sp"
+        android:textSize="64sp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -55,14 +56,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="start run" />
+            android:background="@drawable/button_background"
+            android:elevation="4dp"
+            android:text="START RUN"
+            android:textColor="@color/white" />
 
         <Button
             android:id="@+id/btn_stopRun"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="stop run" />
+            android:background="@drawable/button_background"
+            android:elevation="4dp"
+            android:text="STOP RUN"
+            android:textColor="@color/white"
+            android:visibility="gone" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

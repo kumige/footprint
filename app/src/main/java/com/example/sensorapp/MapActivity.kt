@@ -1,6 +1,7 @@
 package com.example.sensorapp
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -11,6 +12,7 @@ import android.os.*
 import android.preference.PreferenceManager
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -21,6 +23,10 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
+import org.osmdroid.views.overlay.Polyline
+import java.math.BigDecimal
+import java.math.RoundingMode
+import kotlin.math.round
 
 const val PERMISSON_CODE = 124
 const val PRIORITY_HIGH_ACCURACY = 100
@@ -30,6 +36,7 @@ class MapActivity : AppCompatActivity(), TrackingHandler.AppReceiver {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var handler: TrackingHandler
     private var requestingLocationUpdates = false
+    private var geoPoints = mutableListOf<GeoPoint>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,18 +72,22 @@ class MapActivity : AppCompatActivity(), TrackingHandler.AppReceiver {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onReceiveResult(message: Message?) {
-        Log.d("dbg", "MapActivity: ${message?.obj}")
-        when(message?.what) {
+        when (message?.what) {
             0 -> {
                 val geoPoint = message.obj as GeoPoint
-
+                geoPoints.add(geoPoint)
                 if (map.overlays.isNotEmpty()) {
                     //Remove old marker
                     map.overlays.clear()
                     map.invalidate()
                     Log.d("dbg", "marker removed")
                 }
+                val line = Polyline()
+                line.setPoints(geoPoints)
+                line.color = getColor(R.color.colorPrimaryDark)
+                map.overlayManager.add(line)
 
                 setMarker(geoPoint)
                 map.controller.animateTo(geoPoint)
@@ -84,11 +95,13 @@ class MapActivity : AppCompatActivity(), TrackingHandler.AppReceiver {
             1 -> {
 
                 val time = message.obj as Int
-                textView_time.text = time.toString()
+                textView_time.text = Utils().formatTimer(time, 0)
             }
             2 -> {
                 val distance = message.obj as Int
-                textView_distance.text = "$distance m"
+                val dDistance = distance.toDouble()
+                val roundedDistance = BigDecimal(dDistance / 1000).setScale(2, RoundingMode.HALF_EVEN)
+                textView_distance.text = "$roundedDistance km"
             }
         }
 
@@ -127,6 +140,8 @@ class MapActivity : AppCompatActivity(), TrackingHandler.AppReceiver {
 
     private fun startRun() {
         requestingLocationUpdates = true
+        btn_startRun.visibility = Button.GONE
+        btn_stopRun.visibility = Button.VISIBLE
         val intent = Intent(this, NavigationService::class.java)
         handler = TrackingHandler(this)
         intent.putExtra("handler", Messenger(handler))
@@ -135,6 +150,8 @@ class MapActivity : AppCompatActivity(), TrackingHandler.AppReceiver {
 
     private fun stopRun() {
         requestingLocationUpdates = false
+        btn_startRun.visibility = Button.VISIBLE
+        btn_stopRun.visibility = Button.GONE
         val intent = Intent(this, NavigationService::class.java)
         stopService(intent)
     }

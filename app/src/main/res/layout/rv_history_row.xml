@@ -40,11 +40,4 @@
             android:textSize="28sp" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/textView_dbgroute"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
 </androidx.constraintlayout.widget.ConstraintLayout>
