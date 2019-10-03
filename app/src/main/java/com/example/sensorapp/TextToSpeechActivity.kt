@@ -31,6 +31,7 @@ class TextToSpeechActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     }
 
+
     override fun onInit(status: Int) {
 
         if (status == TextToSpeech.SUCCESS) {
@@ -60,7 +61,7 @@ class TextToSpeechActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     private fun speakOut() {
-
+        
         // Lists all the voices available
         /*for (tmpVoice in tts.voices) {
         Log.d("voices","${tmpVoice}")

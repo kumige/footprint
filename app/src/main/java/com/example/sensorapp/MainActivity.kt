@@ -3,6 +3,7 @@ package com.example.sensorapp
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
@@ -12,6 +13,9 @@ import androidx.core.content.ContextCompat
 import androidx.room.Room
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.doAsync
+import org.json.JSONObject
+import java.net.URL
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.util.*
 
@@ -38,7 +42,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         checkPermission()
-
     }
 
     private fun checkPermission() {
