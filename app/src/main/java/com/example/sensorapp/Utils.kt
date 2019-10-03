@@ -4,6 +4,10 @@ import androidx.room.TypeConverter
 import com.google.gson.reflect.TypeToken
 import com.google.gson.Gson
 
+const val FORMAT_TIMER_CLOCK = 0
+const val FORMAT_TIMER_PROFILE = 1
+const val FORMAT_TIMER_TTS = 2
+
 class Utils {
 
     private val gson = Gson()
@@ -38,9 +42,14 @@ class Utils {
         return when (originCode) {
             0 -> "$hours:$minutes:$seconds"
             1 -> when {
-                min == 0 -> seconds
+                min == 0 -> "00:$seconds"
                 h == 0 -> "$minutes:$seconds"
                 else -> "$hours:$minutes:$seconds"
+            }
+            2 -> when {
+                min == 0 -> seconds
+                h == 0 -> "$min:$seconds"
+                else -> "$h:$min:$seconds"
             }
             else -> "$hours:$minutes:$seconds"
         }

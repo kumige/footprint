@@ -45,7 +45,7 @@ class HistoryRecyclerAdapter(private val history: List<History>
 
             view.textView_date.text = "${date[0]} $time"
             view.textView_distance.text = "${historyItem.distance}m"
-            view.textView_time.text = Utils().formatTimer(historyItem.duration, 1)
+            view.textView_time.text = Utils().formatTimer(historyItem.duration, FORMAT_TIMER_PROFILE)
         }
 
         override fun onClick(v: View) {

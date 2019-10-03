@@ -27,6 +27,7 @@
         android:textSize="36sp"
         app:layout_constraintBottom_toTopOf="@+id/textView_time"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView

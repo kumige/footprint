@@ -13,16 +13,21 @@ import org.osmdroid.util.Distance
 import org.osmdroid.util.GeoPoint
 import org.threeten.bp.LocalDateTime
 import java.lang.Exception
-import kotlin.math.sqrt
 import androidx.core.content.ContextCompat.getSystemService
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import kotlin.math.cos
 import androidx.core.content.ContextCompat.getSystemService
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import kotlin.math.asin
-import kotlin.math.sin
 import androidx.core.content.ContextCompat.getSystemService
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import android.speech.tts.TextToSpeech
+import android.speech.tts.Voice
+import kotlinx.android.synthetic.main.activity_texttospeech.*
+import org.jetbrains.anko.notificationManager
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.util.*
+import kotlin.collections.HashSet
+import kotlin.math.*
 
 
 const val CHANNEL_ID = "channel_01"
@@ -30,7 +35,7 @@ const val LOCATION_UPDATE = 0
 const val TIMER_UPDATE = 1
 const val DISTANCE_UPDATE = 2
 
-class NavigationService : Service() {
+class NavigationService : Service(), TextToSpeech.OnInitListener {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
@@ -44,11 +49,33 @@ class NavigationService : Service() {
     private var runTime = 0
     private lateinit var timerThread: Thread
     private var timerIsRunning = false
+    private lateinit var tts: TextToSpeech
+    private var ttsDistance = 0.0
 
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
+        tts = TextToSpeech(this, this, "com.google.android.tts")
         startTracking()
+    }
+
+    // Initialize TTS voice
+    override fun onInit(status: Int) {
+        if (status == TextToSpeech.SUCCESS) {
+            val voiceGender = HashSet<String>()
+            voiceGender.add("female")
+            //Finnish TTS voice
+            //val newVoice = Voice("fi-FI-language", Locale("fi", "FI"), 400,200,false, voiceGender)
+
+            // English TTS voice
+            val newVoice = Voice("en-US-language", Locale("en", "US"), 400, 200, false, voiceGender)
+            //tts.setVoice(newVoice)
+            tts.setSpeechRate(0.6f)
+            tts.voice = newVoice
+
+        } else {
+            Log.e("TTS", "Initilization Failed!")
+        }
     }
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -98,6 +125,50 @@ class NavigationService : Service() {
 
                         totalDistance += locA.distanceTo(locB)
                     }
+
+                    // TTS voice gives information about run every kilometer
+                    if (ttsDistance + 10 < totalDistance) {
+                        val time = Utils().formatTimer(runTime, FORMAT_TIMER_TTS)
+                        var hours = ""
+                        var minutes = ""
+                        var seconds = ""
+                        val distanceInKm = BigDecimal(totalDistance / 1000).setScale(2, RoundingMode.HALF_EVEN)
+                        when {
+                            runTime >= 3600 -> {
+                                val splitTime = time.split(":")
+                                hours = splitTime[0]
+                                minutes = splitTime[1]
+                                seconds = splitTime[2]
+                                tts.speak(
+                                    "Distance: $distanceInKm kilometers. Time: $hours hours, $minutes minutes, $seconds seconds",
+                                    TextToSpeech.QUEUE_FLUSH,
+                                    null,
+                                    ""
+                                )
+                            }
+                            runTime >= 60 -> {
+                                val splitTime = time.split(":")
+                                minutes = splitTime[0]
+                                seconds = splitTime[1]
+                                tts.speak(
+                                    "Distance: $distanceInKm kilometers. Time: $minutes minutes, $seconds seconds",
+                                    TextToSpeech.QUEUE_FLUSH,
+                                    null,
+                                    ""
+                                )
+
+                            }
+                            else -> tts.speak(
+                                "Distance: $distanceInKm kilometers. Time: $runTime seconds",
+                                TextToSpeech.QUEUE_FLUSH,
+                                null,
+                                ""
+                            )
+                        }
+                        ttsDistance = totalDistance
+
+                    }
+                    Log.d("dbg", "ttsDistance: $ttsDistance")
                     previousPoint = geoPoint
 
                     // Send location update to UI thread
@@ -160,6 +231,10 @@ class NavigationService : Service() {
 
         Log.d("dbg", "trackedPoints size: ${trackedPoints.size}")
         Log.d("dbg", "totalDistance: $totalDistance")
+
+        tts.stop()
+        tts.shutdown()
+
 
         val distance = if (totalDistance > 1.0) {
             totalDistance.toInt()

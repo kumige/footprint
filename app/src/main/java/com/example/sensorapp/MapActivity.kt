@@ -60,22 +60,13 @@ class MapActivity : AppCompatActivity(), TrackingHandler.AppReceiver {
         map.setMultiTouchControls(true)
         map.controller.setZoom(18.0)
 
-        // Set starting location before tracking
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-
-        fusedLocationClient.lastLocation.addOnCompleteListener(this) { task ->
-            if (task.isSuccessful && task.result != null) {
-                val startPoint = GeoPoint(task.result!!.latitude, task.result!!.longitude)
-                map.controller.setCenter(startPoint)
-                setMarker(startPoint)
-            }
-        }
     }
 
     @SuppressLint("SetTextI18n")
     override fun onReceiveResult(message: Message?) {
         when (message?.what) {
-            0 -> {
+            LOCATION_UPDATE -> {
                 val geoPoint = message.obj as GeoPoint
                 geoPoints.add(geoPoint)
                 if (map.overlays.isNotEmpty()) {
@@ -92,12 +83,12 @@ class MapActivity : AppCompatActivity(), TrackingHandler.AppReceiver {
                 setMarker(geoPoint)
                 map.controller.animateTo(geoPoint)
             }
-            1 -> {
+            TIMER_UPDATE -> {
 
                 val time = message.obj as Int
-                textView_time.text = Utils().formatTimer(time, 0)
+                textView_time.text = Utils().formatTimer(time, FORMAT_TIMER_CLOCK)
             }
-            2 -> {
+            DISTANCE_UPDATE -> {
                 val distance = message.obj as Int
                 val dDistance = distance.toDouble()
                 val roundedDistance = BigDecimal(dDistance / 1000).setScale(2, RoundingMode.HALF_EVEN)
@@ -120,6 +111,13 @@ class MapActivity : AppCompatActivity(), TrackingHandler.AppReceiver {
     override fun onResume() {
         super.onResume()
         requestingLocationUpdates = true
+        fusedLocationClient.lastLocation.addOnCompleteListener(this) { task ->
+            if (task.isSuccessful && task.result != null) {
+                val startPoint = GeoPoint(task.result!!.latitude, task.result!!.longitude)
+                map.controller.setCenter(startPoint)
+                setMarker(startPoint)
+            }
+        }
         //if (checkLocationPermission()) startRun()
     }
 
