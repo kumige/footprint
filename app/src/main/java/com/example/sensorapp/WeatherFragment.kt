@@ -7,6 +7,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -26,7 +30,11 @@ class WeatherFragment : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var latitude: Double? = 0.0
     private var longitude: Double? = 0.0
-    //lateinit var temperatureTextView: TextView
+
+    lateinit var progressbar: ProgressBar
+    lateinit var linearLayoutMain: LinearLayout
+    lateinit var errorMsg: TextView
+    lateinit var errorIcon: ImageView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,22 +43,29 @@ class WeatherFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_weather, container, false)
+        progressbar = view.findViewById(R.id.loader)
+        linearLayoutMain = view.findViewById(R.id.mainLinearLayout)
+        errorMsg = view.findViewById(R.id.textView_weatherErrorMsg)
+        errorIcon = view.findViewById(R.id.errorImg)
         return view
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
          weatherTask().execute()
-
     }
 
     inner class weatherTask : AsyncTask<String, Void, String>() {
 
-        /*override fun onPreExecute() {
+        override fun onPreExecute() {
             super.onPreExecute()
-            loader.visibility = View.VISIBLE
-            mainLinearLayout.visibility = View.GONE
-        }*/
+            if(::progressbar.isInitialized && ::linearLayoutMain.isInitialized && ::errorMsg.isInitialized && ::errorIcon.isInitialized) {
+                progressbar.visibility = View.VISIBLE
+                linearLayoutMain.visibility = View.GONE
+                errorMsg.visibility = View.GONE
+                errorIcon.visibility = View.GONE
+            }
+        }
 
         override fun doInBackground(vararg params: String?): String? {
             var response:String?
@@ -121,10 +136,13 @@ class WeatherFragment : Fragment() {
                 textView_weather.text = weatherDescription
                 textView_weatherLocation.text = city
 
-                loader.visibility = View.GONE
-                mainLinearLayout.visibility = View.VISIBLE
+                progressbar.visibility = View.GONE
+                linearLayoutMain.visibility = View.VISIBLE
 
             } catch (e: Exception) {
+                progressbar.visibility = View.GONE
+                errorMsg.visibility = View.VISIBLE
+                errorIcon.visibility = View.VISIBLE
             }
         }
     }
@@ -234,7 +252,14 @@ class WeatherFragment : Fragment() {
                 Log.d("weather","MIST")
             }
 
-            else -> Log.d("weather","Set default")
+            else -> {
+                progressbar.visibility = View.GONE
+                linearLayoutMain.visibility = View.GONE
+                errorMsg.visibility = View.VISIBLE
+                errorIcon.visibility = View.VISIBLE
+                errorMsg.text = "Error: Invalid weather"
+                Log.d("weather", "Invalid weather")
+            }
         }
     }
 }
