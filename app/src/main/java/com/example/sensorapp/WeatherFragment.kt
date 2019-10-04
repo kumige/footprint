@@ -1,5 +1,6 @@
 package com.example.sensorapp
 
+import android.app.Activity
 import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
@@ -7,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import kotlinx.android.synthetic.main.fragment_weather.*
 import org.json.JSONObject
 import java.net.URL
@@ -18,6 +21,9 @@ class WeatherFragment : Fragment() {
 
     val apiKey: String = BuildConfig.ApiKey
     val city: String = "helsinki,fi"
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var latitude: Double? = 0.0
+    private var longitude: Double? = 0.0
     //lateinit var temperatureTextView: TextView
 
     override fun onCreateView(
@@ -34,18 +40,34 @@ class WeatherFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
          weatherTask().execute()
+
     }
 
     inner class weatherTask : AsyncTask<String, Void, String>() {
 
         override fun doInBackground(vararg params: String?): String? {
             var response:String?
+
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity as Activity)
+
             try{
+                Log.d("dbg", "$latitude, $longitude")
+                /*fusedLocationClient.lastLocation.addOnCompleteListener { task ->
+                    latitude = task.result?.latitude
+                    longitude = task.result?.longitude
+                    Log.d("dbg", "fusedLocationClient $latitude, $longitude")
+                    response = URL("https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&units=metric&APPID=$apiKey").readText(
+                        Charsets.UTF_8
+                    )
+                }
+                */
+
                 response = URL("https://api.openweathermap.org/data/2.5/weather?q=$city&units=metric&appid=$apiKey").readText(
                     Charsets.UTF_8
                 )
             }catch (e: Exception){
                 response = null
+                Log.d("dbg", "$e")
             }
             return response
         }
