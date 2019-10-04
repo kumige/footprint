@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_weather.*
 import org.json.JSONObject
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
@@ -18,7 +20,6 @@ class WeatherFragment : Fragment() {
 
     val apiKey: String = BuildConfig.ApiKey
     val city: String = "helsinki,fi"
-    //lateinit var temperatureTextView: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,7 +28,6 @@ class WeatherFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_weather, container, false)
-        //temperatureTextView = view.findViewById(R.id.textView_temperature)
         return view
     }
 
@@ -37,6 +37,12 @@ class WeatherFragment : Fragment() {
     }
 
     inner class weatherTask : AsyncTask<String, Void, String>() {
+
+        /*override fun onPreExecute() {
+            super.onPreExecute()
+            loader.visibility = View.VISIBLE
+            mainLinearLayout.visibility = View.GONE
+        }*/
 
         override fun doInBackground(vararg params: String?): String? {
             var response:String?
@@ -65,7 +71,6 @@ class WeatherFragment : Fragment() {
                     "Updated at: " + SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.ENGLISH).format(
                         Date(updatedAt * 1000)
                     )
-                val temp = main.getString("temp") + "°C"
                 val tempMin = "Min Temp: " + main.getString("temp_min") + "°C"
                 val tempMax = "Max Temp: " + main.getString("temp_max") + "°C"
                 val pressure = main.getString("pressure")
@@ -76,19 +81,32 @@ class WeatherFragment : Fragment() {
                 val windSpeed = wind.getString("speed")
                 val weatherDescription = weather.getString("description")
                 val weatherSimple = weather.getString("main")
+                //val temp = main.getString("temp") + "°C"
 
                 val address = jsonObj.getString("name") + ", " + sys.getString("country")
 
-                weatherColors("Mist")
-                textView_temperature.text = temp
+                val tempINT = main.getString("temp")
+                Log.d("weather", "tempint: ${tempINT}")
+                val tempRounded = BigDecimal(tempINT).setScale(0, RoundingMode.HALF_EVEN).toString()
+                Log.d("weather", "temprounded: ${tempRounded}")
+
+                val tempString = "$tempRounded°C"
+                Log.d("weather", "${weatherSimple}, ${weatherDescription}")
+
+                weatherColors(weatherSimple, weatherDescription)
+                textView_temperature.text = tempString
                 textView_weather.text = weatherDescription
                 textView_weatherLocation.text = city
+
+                loader.visibility = View.GONE
+                mainLinearLayout.visibility = View.VISIBLE
+
             } catch (e: Exception) {
             }
         }
     }
 
-    private fun weatherColors(simpleWeather: String){
+    private fun weatherColors(simpleWeather: String, weatherDesc: String){
         when(simpleWeather){
             "Thunderstorm" -> {
                 weather_icon.setImageResource(R.drawable.thunder)
@@ -121,9 +139,16 @@ class WeatherFragment : Fragment() {
             }
 
             "Clouds" -> {
+                // LISÄÄ PUOLIPILVINEN
+                if(weatherDesc == "few clouds: 11-25%") {
                 weather_icon.setImageResource(R.drawable.cloudy)
                 weather_background.setBackgroundResource(R.drawable.weather_background_cloudy)
-                Log.d("weather","cloudy")
+                Log.d("weather", "cloudy")
+                } else {
+                weather_icon.setImageResource(R.drawable.cloudy)
+                weather_background.setBackgroundResource(R.drawable.weather_background_cloudy)
+                Log.d("weather", "cloudy")
+                }
             }
 
             "Mist" -> {
