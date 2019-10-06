@@ -25,6 +25,10 @@ class ProfileActivity : AppCompatActivity() {
         setContentView(R.layout.activity_profile)
         loadProfileData()
 
+        val actionbar = supportActionBar
+        actionbar!!.title = "Profile"
+        actionbar.setDisplayHomeAsUpEnabled(true)
+
         linearLayoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = linearLayoutManager
 
@@ -47,5 +51,10 @@ class ProfileActivity : AppCompatActivity() {
             adapter = HistoryRecyclerAdapter(history)
             recyclerView.adapter = adapter
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return super.onSupportNavigateUp()
     }
 }

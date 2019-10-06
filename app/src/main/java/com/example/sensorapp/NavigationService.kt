@@ -127,7 +127,7 @@ class NavigationService : Service(), TextToSpeech.OnInitListener {
                     }
 
                     // TTS voice gives information about run every kilometer
-                    if (ttsDistance + 10 < totalDistance) {
+                    if (ttsDistance + 1000 < totalDistance) {
                         val time = Utils().formatTimer(runTime, FORMAT_TIMER_TTS)
                         var hours = ""
                         var minutes = ""

@@ -14,7 +14,7 @@ class HistoryRecyclerAdapter(private val history: List<History>
 ) : RecyclerView.Adapter<HistoryRecyclerAdapter.ItemHolder>() {
 
     override fun onBindViewHolder(holder: ItemHolder, position: Int) {
-        val historyItem = history[position]
+        val historyItem = history.reversed()[position]
         holder.bindPhoto(historyItem)
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryRecyclerAdapter.ItemHolder {
