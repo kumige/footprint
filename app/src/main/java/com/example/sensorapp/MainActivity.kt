@@ -35,12 +35,6 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)
         }
-
-        btn_TTS.setOnClickListener {
-            val intent = Intent(this, TextToSpeechActivity::class.java)
-            startActivity(intent)
-        }
-
         checkPermission()
     }
 

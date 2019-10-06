@@ -3,6 +3,7 @@ package com.example.sensorapp
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Dao
 import androidx.room.Room
@@ -25,8 +26,13 @@ class ProfileActivity : AppCompatActivity() {
         setContentView(R.layout.activity_profile)
         loadProfileData()
 
+        val actionbar = supportActionBar
+        actionbar!!.title = "Profile"
+        actionbar.setDisplayHomeAsUpEnabled(true)
+
         linearLayoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = linearLayoutManager
+        recyclerView.addItemDecoration(DividerItemDecoration(applicationContext, DividerItemDecoration.VERTICAL))
 
     }
 
@@ -47,5 +53,10 @@ class ProfileActivity : AppCompatActivity() {
             adapter = HistoryRecyclerAdapter(history)
             recyclerView.adapter = adapter
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return super.onSupportNavigateUp()
     }
 }

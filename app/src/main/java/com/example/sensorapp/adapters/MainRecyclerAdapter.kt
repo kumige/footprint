@@ -1,4 +1,4 @@
-package com.example.sensorapp
+package com.example.sensorapp.adapters
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -8,16 +8,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
+import com.example.sensorapp.*
 import kotlinx.android.synthetic.main.rv_history_row.view.*
 
-class HistoryRecyclerAdapter(private val history: List<History>
-) : RecyclerView.Adapter<HistoryRecyclerAdapter.ItemHolder>() {
+class MainRecyclerAdapter(private val history: List<History>) :
+    RecyclerView.Adapter<MainRecyclerAdapter.ItemHolder>() {
 
-    override fun onBindViewHolder(holder: ItemHolder, position: Int) {
-        val historyItem = history.reversed()[position]
-        holder.bindItem(historyItem)
-    }
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryRecyclerAdapter.ItemHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): MainRecyclerAdapter.ItemHolder {
         val inflatedView = parent.inflate(R.layout.rv_history_row, false)
         return ItemHolder(inflatedView)
     }
@@ -26,26 +26,36 @@ class HistoryRecyclerAdapter(private val history: List<History>
         return LayoutInflater.from(context).inflate(layoutRes, this, attachToRoot)
     }
 
-    override fun getItemCount() = history.size
+    override fun getItemCount(): Int {
+        return 3
+    }
 
-
+    override fun onBindViewHolder(holder: MainRecyclerAdapter.ItemHolder, position: Int) {
+        val rHistory = history.reversed()
+        val historyItem = rHistory[position]
+        Log.d("dbg", "$historyItem")
+        holder.bindItem(historyItem)
+    }
 
     class ItemHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener {
         private var view: View = v
         private lateinit var historyRun: History
+
         init {
             v.setOnClickListener(this)
         }
 
         @SuppressLint("SetTextI18n")
         fun bindItem(historyItem: History) {
+            Log.d("dbg", "$historyItem")
             historyRun = historyItem
             val date = historyItem.startTime.split("T")
             val time = date[1].slice(0..4)
 
             view.textView_date.text = "${date[0]} $time"
             view.textView_distance.text = "${historyItem.distance}m"
-            view.textView_time.text = Utils().formatTimer(historyItem.duration, FORMAT_TIMER_PROFILE)
+            view.textView_time.text =
+                Utils().formatTimer(historyItem.duration, FORMAT_TIMER_PROFILE)
         }
 
         override fun onClick(v: View) {
@@ -63,4 +73,5 @@ class HistoryRecyclerAdapter(private val history: List<History>
             private val RUN_KEY = "RUN"
         }
     }
+
 }

@@ -96,7 +96,7 @@ class NavigationService : Service(), TextToSpeech.OnInitListener {
             .setContentText("run faster")
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setSmallIcon(R.drawable.logo)
             .build()
 
         startForeground(1, notification)
@@ -127,7 +127,7 @@ class NavigationService : Service(), TextToSpeech.OnInitListener {
                     }
 
                     // TTS voice gives information about run every kilometer
-                    if (ttsDistance + 10 < totalDistance) {
+                    if (ttsDistance + 1000 < totalDistance) {
                         val time = Utils().formatTimer(runTime, FORMAT_TIMER_TTS)
                         var hours = ""
                         var minutes = ""
@@ -270,6 +270,8 @@ class NavigationService : Service(), TextToSpeech.OnInitListener {
         }
 
     }
+
+
 
 }
 
