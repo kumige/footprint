@@ -35,8 +35,6 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)
         }
-
-
         checkPermission()
     }
 
