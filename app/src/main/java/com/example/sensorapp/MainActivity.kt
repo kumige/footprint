@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.room.Room
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.json.JSONObject
 import java.net.URL
 import java.text.SimpleDateFormat
@@ -25,14 +26,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        btn_openMap.setOnClickListener {
-            val intent = Intent(this, MapActivity::class.java)
-            // start your next activity
+        cardView_profile.setOnClickListener {
+            val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)
         }
 
-        btn_openProfile.setOnClickListener {
-            val intent = Intent(this, ProfileActivity::class.java)
+        cardView_run.setOnClickListener {
+            val intent = Intent(this, MapActivity::class.java)
             startActivity(intent)
         }
         checkPermission()

@@ -27,7 +27,8 @@ class MainRecyclerAdapter(private val history: List<History>) :
     }
 
     override fun getItemCount(): Int {
-        return 3
+        return if (history.size > 3) 3
+        else history.size
     }
 
     override fun onBindViewHolder(holder: MainRecyclerAdapter.ItemHolder, position: Int) {

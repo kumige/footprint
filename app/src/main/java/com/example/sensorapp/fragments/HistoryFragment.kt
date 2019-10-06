@@ -14,6 +14,7 @@ import com.example.sensorapp.adapters.MainRecyclerAdapter
 import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.android.synthetic.main.fragment_history.*
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 
 class HistoryFragment: Fragment() {
 
@@ -22,10 +23,6 @@ class HistoryFragment: Fragment() {
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var adapter: MainRecyclerAdapter
     private lateinit var recyclerView: RecyclerView
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,9 +40,12 @@ class HistoryFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         loadProfileData()
-
     }
 
+    override fun onResume() {
+        super.onResume()
+        loadProfileData()
+    }
 
     private fun loadProfileData() {
         val db = Room.databaseBuilder(
@@ -54,12 +54,10 @@ class HistoryFragment: Fragment() {
         ).build()
 
         doAsync {
-            //db.dao().insertRun(History(0, "${LocalDateTime.now()}", 344, 1337))
-
             history = db.dao().getAllHistory()
-
             adapter = MainRecyclerAdapter(history)
             fragmentHistoryRecyclerView.adapter = adapter
         }
     }
+
 }
