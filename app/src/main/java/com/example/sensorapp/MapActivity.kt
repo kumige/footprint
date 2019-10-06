@@ -43,11 +43,7 @@ class MapActivity : AppCompatActivity(), TrackingHandler.AppReceiver {
         setContentView(R.layout.activity_map)
 
         val actionbar = supportActionBar
-        //set actionbar title
-        actionbar!!.title = "Map"
-        //set back button
-        actionbar.setDisplayHomeAsUpEnabled(true)
-        actionbar.setDisplayHomeAsUpEnabled(true)
+        //actionbar?.title = "Map"
 
         btn_startRun.setOnClickListener { startRun() }
         btn_stopRun.setOnClickListener { stopRun() }
@@ -91,7 +87,8 @@ class MapActivity : AppCompatActivity(), TrackingHandler.AppReceiver {
             DISTANCE_UPDATE -> {
                 val distance = message.obj as Int
                 val dDistance = distance.toDouble()
-                val roundedDistance = BigDecimal(dDistance / 1000).setScale(2, RoundingMode.HALF_EVEN)
+                val roundedDistance =
+                    BigDecimal(dDistance / 1000).setScale(2, RoundingMode.HALF_EVEN)
                 textView_distance.text = "$roundedDistance km"
             }
         }
@@ -102,15 +99,16 @@ class MapActivity : AppCompatActivity(), TrackingHandler.AppReceiver {
     private fun setMarker(geoPoint: GeoPoint) {
         if (requestingLocationUpdates) {
             val marker = Marker(map)
+            marker.icon = getDrawable(R.drawable.location_marker)
             marker.position = geoPoint
-            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+            marker.setAnchor(0.2.toFloat(), 0.2.toFloat())
             map.overlays.add(marker)
         }
     }
 
     override fun onResume() {
         super.onResume()
-        requestingLocationUpdates = true
+        //requestingLocationUpdates = true
         fusedLocationClient.lastLocation.addOnCompleteListener(this) { task ->
             if (task.isSuccessful && task.result != null) {
                 val startPoint = GeoPoint(task.result!!.latitude, task.result!!.longitude)
@@ -123,7 +121,7 @@ class MapActivity : AppCompatActivity(), TrackingHandler.AppReceiver {
 
     override fun onPause() {
         super.onPause()
-        requestingLocationUpdates = false
+        //requestingLocationUpdates = false
     }
 
     override fun onDestroy() {
@@ -154,8 +152,11 @@ class MapActivity : AppCompatActivity(), TrackingHandler.AppReceiver {
         stopService(intent)
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
-        return true
+    override fun onBackPressed() {
+        if (requestingLocationUpdates) {
+            this.moveTaskToBack(true)
+        } else super.onBackPressed()
+
+
     }
 }
