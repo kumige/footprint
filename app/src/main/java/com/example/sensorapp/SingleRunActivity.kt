@@ -55,8 +55,11 @@ class SingleRunActivity : AppCompatActivity() {
         line.setPoints(geoPoints)
         line.color = getColor(R.color.colorPrimaryDark)
         map.overlayManager.add(line)
-        val startPoint = geoPoints[0]
-        map.controller.animateTo(startPoint)
+        if (geoPoints.isNotEmpty()) {
+            val startPoint = geoPoints[0]
+            map.controller.animateTo(startPoint)
+        }
+
     }
 
     override fun onSupportNavigateUp(): Boolean {

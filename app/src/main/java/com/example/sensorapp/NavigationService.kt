@@ -96,7 +96,7 @@ class NavigationService : Service(), TextToSpeech.OnInitListener {
             .setContentText("run faster")
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setSmallIcon(R.drawable.logo)
             .build()
 
         startForeground(1, notification)
