@@ -1,6 +1,9 @@
 package com.example.sensorapp
 
 import android.app.Activity
+import android.content.Context
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
@@ -15,18 +18,20 @@ import androidx.fragment.app.Fragment
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.android.synthetic.main.fragment_weather.*
+import org.jetbrains.anko.doAsync
 import org.json.JSONObject
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
+import android.location.Geocoder
+import android.view.animation.AnimationUtils
 
 
 class WeatherFragment : Fragment() {
 
     val apiKey: String = BuildConfig.ApiKey
-    val city: String = "helsinki,fi"
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var latitude: Double? = 0.0
     private var longitude: Double? = 0.0
@@ -35,6 +40,13 @@ class WeatherFragment : Fragment() {
     lateinit var linearLayoutMain: LinearLayout
     lateinit var errorMsg: TextView
     lateinit var errorIcon: ImageView
+    lateinit var thiscontext: Context
+    lateinit var weatherRefresh: ImageView
+    lateinit var weatherBackground: ImageView
+
+    lateinit var cityName: String
+    lateinit var countryName: String
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,51 +54,74 @@ class WeatherFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        thiscontext = getActivity()!!.getApplicationContext()
         val view = inflater.inflate(R.layout.fragment_weather, container, false)
         progressbar = view.findViewById(R.id.loader)
         linearLayoutMain = view.findViewById(R.id.mainLinearLayout)
         errorMsg = view.findViewById(R.id.textView_weatherErrorMsg)
         errorIcon = view.findViewById(R.id.errorImg)
+        weatherBackground = view.findViewById(R.id.weather_background)
+        weatherRefresh = view.findViewById(R.id.weather_refresh)
+        weatherRefresh.setOnClickListener{refreshWeather()}
         return view
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-         weatherTask().execute()
+         getLocation()
+    }
+
+    fun refreshWeather(){
+        weatherRefresh.startAnimation(AnimationUtils.loadAnimation(thiscontext, R.anim.anim))
+        getLocation()
+    }
+
+    fun getLocation(){
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity as Activity)
+        doAsync {
+            fusedLocationClient.lastLocation.addOnCompleteListener { task ->
+                latitude = task.result?.latitude
+                longitude = task.result?.longitude
+                Log.d("dbg", "fusedLocationClient $latitude, $longitude")
+
+                // Get city/country
+                val geocoder = Geocoder(thiscontext, Locale.getDefault())
+                var addresses = listOf<Any>()
+                addresses = geocoder.getFromLocation(latitude!!, longitude!!, 1)
+                Log.d("dbg", "address $addresses")
+
+                cityName = addresses.get(0).getLocality()
+                countryName = addresses.get(0).getCountryName()
+
+                weatherTask().execute()
+            }
+        }
     }
 
     inner class weatherTask : AsyncTask<String, Void, String>() {
 
         override fun onPreExecute() {
             super.onPreExecute()
-            if(::progressbar.isInitialized && ::linearLayoutMain.isInitialized && ::errorMsg.isInitialized && ::errorIcon.isInitialized) {
+            if(::progressbar.isInitialized && ::linearLayoutMain.isInitialized && ::errorMsg.isInitialized && ::errorIcon.isInitialized && ::weatherBackground.isInitialized) {
                 progressbar.visibility = View.VISIBLE
                 linearLayoutMain.visibility = View.GONE
                 errorMsg.visibility = View.GONE
                 errorIcon.visibility = View.GONE
+                weatherBackground.visibility = View.GONE
+                weatherRefresh.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
             }
         }
 
         override fun doInBackground(vararg params: String?): String? {
             var response:String?
 
-            fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity as Activity)
-
             try{
                 Log.d("dbg", "$latitude, $longitude")
-                /*fusedLocationClient.lastLocation.addOnCompleteListener { task ->
-                    latitude = task.result?.latitude
-                    longitude = task.result?.longitude
-                    Log.d("dbg", "fusedLocationClient $latitude, $longitude")
-                    response = URL("https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&units=metric&APPID=$apiKey").readText(
-                        Charsets.UTF_8
-                    )
-                }
-                */
-
-                response = URL("https://api.openweathermap.org/data/2.5/weather?q=$city&units=metric&appid=$apiKey").readText(
+                response = URL("https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&units=metric&appid=$apiKey").readText(
                     Charsets.UTF_8
                 )
+                Log.d("dbg", "resp $response")
+
             }catch (e: Exception){
                 response = null
                 Log.d("dbg", "$e")
@@ -123,6 +158,7 @@ class WeatherFragment : Fragment() {
 
                 val address = jsonObj.getString("name") + ", " + sys.getString("country")
 
+                // Rounding temperature
                 val tempINT = main.getString("temp")
                 Log.d("weather", "tempint: ${tempINT}")
                 val tempRounded = BigDecimal(tempINT).setScale(0, RoundingMode.HALF_EVEN).toString()
@@ -131,18 +167,22 @@ class WeatherFragment : Fragment() {
                 val tempString = "$tempRounded°C"
                 Log.d("weather", "${weatherSimple}, ${weatherDescription}")
 
-                weatherColors(weatherSimple, weatherDescription)
                 textView_temperature.text = tempString
                 textView_weather.text = weatherDescription
-                textView_weatherLocation.text = city
+                textView_weatherLocation.text = "$cityName, $countryName"
+                weatherColors(weatherSimple, weatherDescription)
 
                 progressbar.visibility = View.GONE
                 linearLayoutMain.visibility = View.VISIBLE
-
+                weatherBackground.visibility = View.VISIBLE
+                weatherRefresh.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
             } catch (e: Exception) {
+                linearLayoutMain.visibility = View.GONE
                 progressbar.visibility = View.GONE
+                weatherBackground.visibility = View.GONE
                 errorMsg.visibility = View.VISIBLE
                 errorIcon.visibility = View.VISIBLE
+                weatherRefresh.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP)
             }
         }
     }
@@ -253,6 +293,8 @@ class WeatherFragment : Fragment() {
             }
 
             else -> {
+                weatherRefresh.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP)
+                weatherBackground.visibility = View.GONE
                 progressbar.visibility = View.GONE
                 linearLayoutMain.visibility = View.GONE
                 errorMsg.visibility = View.VISIBLE
