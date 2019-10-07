@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">SensorApp</string>
+    <string name="profile">Profile</string>
+    <string name="start_run">Start run</string>
+    <string name="past_runs">Past runs</string>
+    <string name="recent_runs">Recent runs</string>
+    <string name="tts_with_hours">Distance: %1$s kilometers. Time: %2$s hours, %3$s minutes, %4$s seconds</string>
+    <string name="tts_with_minutes">Distance: %1$s kilometers. Time: %2$s minutes, %1$s seconds</string>
+    <string name="tts_with_seconds">Distance: %1$s kilometers. Time: %2$d seconds</string>
+    <string name="timer_placeholder">00:00:00</string>
+    <string name="distance_placeholder">0.00 km</string>
+    <string name="time_distance_placeholder">0 km in 00:00:00</string>
+    <string name="time_distance">%1$s km in %2$s</string>
+    <string name="run_completed_at_placeholder">Run completed on xx.xx.xx</string>
+    <string name="run_completed_at">Run completed on %1$s %2$s</string>
+    <string name="pace_placeholder">Pace: x min / km</string>
+    <string name="pace">Pace: %1$s min / km</string>
+    <string name="btn_start_run">START RUN</string>
+    <string name="btn_stop_run">STOP RUN</string>
 </resources>

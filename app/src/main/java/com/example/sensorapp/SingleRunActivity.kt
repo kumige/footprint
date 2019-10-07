@@ -42,13 +42,12 @@ class SingleRunActivity : AppCompatActivity() {
         val time = date[1].slice(0..4)
         val km = historyItem.distance.toDouble() / 1000
         val distanceInKm = BigDecimal(km).setScale(2, RoundingMode.HALF_EVEN)
-        Log.d("dbg", "distance: $distanceInKm")
         val minutes = historyItem.duration.toDouble() / 60.0
         val pace = BigDecimal(minutes / km).setScale(2, RoundingMode.HALF_EVEN)
 
-        textView_runCompletedAt.text = "Run completed on ${date[0]} $time"
-        textView_timeAndDistance.text = "$distanceInKm km in ${Utils().formatTimer(historyItem.duration, 0)}"
-        textView_pace.text = "$pace min/km"
+        textView_runCompletedAt.text = getString(R.string.run_completed_at, date[0], time)
+        textView_timeAndDistance.text = getString(R.string.time_distance, distanceInKm, Utils().formatTimer(historyItem.duration, 0))
+        textView_pace.text = getString(R.string.pace, pace)
 
         val geoPoints = DbTypeConverters().stringToGeoPointList(historyItem.route)
         val line = Polyline()

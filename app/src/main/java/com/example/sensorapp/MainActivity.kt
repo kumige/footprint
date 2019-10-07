@@ -3,41 +3,57 @@ package com.example.sensorapp
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.Settings
-import android.util.Log
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.room.Room
+import com.example.sensorapp.fragments.HistoryFragment
 import kotlinx.android.synthetic.main.activity_main.*
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.sdk27.coroutines.onClick
-import org.json.JSONObject
-import java.net.URL
-import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.util.*
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var fragment: HistoryFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        cardView_profile.setOnClickListener {
+        profileLayout.setOnClickListener {
             val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)
         }
 
         cardView_run.setOnClickListener {
-            val intent = Intent(this, MapActivity::class.java)
-            startActivity(intent)
+            if (Utils().checkLocationPermission(applicationContext)) {
+                val intent = Intent(this, MapActivity::class.java)
+                startActivity(intent)
+            }
+            else {
+                Toast.makeText(
+                    applicationContext,
+                    "You must give access to your location for this app to work correctly.",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
         checkPermission()
     }
 
+    override fun onResume() {
+        super.onResume()
+        loadFragment()
+    }
+
+    private fun loadFragment() {
+        val fManager = supportFragmentManager
+        val fTransaction = fManager.beginTransaction()
+        fragment = HistoryFragment()
+        fTransaction.replace(R.id.historyContainer, fragment)
+        fTransaction.commit()
+    }
+
+    // Ask location permission
     private fun checkPermission() {
         if (ContextCompat.checkSelfPermission(
                 this,

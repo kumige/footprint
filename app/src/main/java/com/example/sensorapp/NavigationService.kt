@@ -83,6 +83,7 @@ class NavigationService : Service(), TextToSpeech.OnInitListener {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        // Set handler to messenger
         messenger = intent?.getParcelableExtra("handler")
         return START_NOT_STICKY
     }
@@ -91,6 +92,7 @@ class NavigationService : Service(), TextToSpeech.OnInitListener {
         val notificationIntent = Intent(this, MapActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
 
+        // Create notification
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Tracking location")
             .setContentText("run faster")
@@ -110,10 +112,12 @@ class NavigationService : Service(), TextToSpeech.OnInitListener {
             override fun onLocationResult(locationResult: LocationResult?) {
                 locationResult ?: return
                 for (location in locationResult.locations) {
+
                     // Update UI with location data
                     val geoPoint = GeoPoint(location.latitude, location.longitude)
                     Log.d("dbg", "$geoPoint")
 
+                    // Calculate moved distance
                     if (::previousPoint.isInitialized) {
                         val locA = Location("")
                         locA.latitude = geoPoint.latitude
@@ -132,7 +136,8 @@ class NavigationService : Service(), TextToSpeech.OnInitListener {
                         var hours = ""
                         var minutes = ""
                         var seconds = ""
-                        val distanceInKm = BigDecimal(totalDistance / 1000).setScale(2, RoundingMode.HALF_EVEN)
+                        val distanceInKm =
+                            BigDecimal(totalDistance / 1000).setScale(2, RoundingMode.HALF_EVEN)
                         when {
                             runTime >= 3600 -> {
                                 val splitTime = time.split(":")
@@ -140,7 +145,14 @@ class NavigationService : Service(), TextToSpeech.OnInitListener {
                                 minutes = splitTime[1]
                                 seconds = splitTime[2]
                                 tts.speak(
-                                    "Distance: $distanceInKm kilometers. Time: $hours hours, $minutes minutes, $seconds seconds",
+                                    getString(
+                                        R.string.tts_with_hours,
+                                        distanceInKm,
+                                        hours,
+                                        minutes,
+                                        seconds
+                                    )
+                                    ,
                                     TextToSpeech.QUEUE_FLUSH,
                                     null,
                                     ""
@@ -151,7 +163,12 @@ class NavigationService : Service(), TextToSpeech.OnInitListener {
                                 minutes = splitTime[0]
                                 seconds = splitTime[1]
                                 tts.speak(
-                                    "Distance: $distanceInKm kilometers. Time: $minutes minutes, $seconds seconds",
+                                    getString(
+                                        R.string.tts_with_minutes,
+                                        distanceInKm,
+                                        minutes,
+                                        seconds
+                                    ),
                                     TextToSpeech.QUEUE_FLUSH,
                                     null,
                                     ""
@@ -159,7 +176,7 @@ class NavigationService : Service(), TextToSpeech.OnInitListener {
 
                             }
                             else -> tts.speak(
-                                "Distance: $distanceInKm kilometers. Time: $runTime seconds",
+                                getString(R.string.tts_with_seconds, distanceInKm, runTime),
                                 TextToSpeech.QUEUE_FLUSH,
                                 null,
                                 ""
@@ -168,7 +185,6 @@ class NavigationService : Service(), TextToSpeech.OnInitListener {
                         ttsDistance = totalDistance
 
                     }
-                    Log.d("dbg", "ttsDistance: $ttsDistance")
                     previousPoint = geoPoint
 
                     // Send location update to UI thread
@@ -178,6 +194,7 @@ class NavigationService : Service(), TextToSpeech.OnInitListener {
                     locationMsg.what = LOCATION_UPDATE
                     messenger?.send(locationMsg)
 
+                    // Send distance update to UI thread
                     val distanceMsg = Message()
                     distanceMsg.obj = totalDistance.toInt()
                     distanceMsg.what = DISTANCE_UPDATE
@@ -228,13 +245,8 @@ class NavigationService : Service(), TextToSpeech.OnInitListener {
 
         timerIsRunning = false
         fusedLocationClient.removeLocationUpdates(locationCallback)
-
-        Log.d("dbg", "trackedPoints size: ${trackedPoints.size}")
-        Log.d("dbg", "totalDistance: $totalDistance")
-
         tts.stop()
         tts.shutdown()
-
 
         val distance = if (totalDistance > 1.0) {
             totalDistance.toInt()
@@ -251,6 +263,8 @@ class NavigationService : Service(), TextToSpeech.OnInitListener {
 
         // Convert tracked route to json string
         val route = DbTypeConverters().geoPointListToString(trackedPoints)
+
+        // Insert run to database
         doAsync {
             db.dao().insertRun(History(0, "$startTime", "$endTime", runTime, distance, route))
             runTime = 0
@@ -270,7 +284,6 @@ class NavigationService : Service(), TextToSpeech.OnInitListener {
         }
 
     }
-
 
 
 }

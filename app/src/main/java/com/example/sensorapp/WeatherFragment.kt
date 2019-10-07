@@ -2,6 +2,7 @@ package com.example.sensorapp
 
 import android.app.Activity
 import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.AsyncTask
@@ -10,10 +11,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -26,7 +23,10 @@ import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 import android.location.Geocoder
+import android.os.Build
 import android.view.animation.AnimationUtils
+import android.widget.*
+import androidx.core.content.ContextCompat
 
 
 class WeatherFragment : Fragment() {
@@ -54,7 +54,7 @@ class WeatherFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        thiscontext = getActivity()!!.getApplicationContext()
+        thiscontext = activity!!.applicationContext
         val view = inflater.inflate(R.layout.fragment_weather, container, false)
         progressbar = view.findViewById(R.id.loader)
         linearLayoutMain = view.findViewById(R.id.mainLinearLayout)
@@ -62,21 +62,29 @@ class WeatherFragment : Fragment() {
         errorIcon = view.findViewById(R.id.errorImg)
         weatherBackground = view.findViewById(R.id.weather_background)
         weatherRefresh = view.findViewById(R.id.weather_refresh)
-        weatherRefresh.setOnClickListener{refreshWeather()}
+        weatherRefresh.setOnClickListener { refreshWeather() }
         return view
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-         getLocation()
+
+        if (Utils().checkLocationPermission(activity!!.applicationContext)) getLocation()
+        else {
+            Toast.makeText(
+                activity!!.applicationContext,
+                "You must give access to your location for this app to work correctly.",
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 
-    fun refreshWeather(){
+    private fun refreshWeather() {
         weatherRefresh.startAnimation(AnimationUtils.loadAnimation(thiscontext, R.anim.anim))
         getLocation()
     }
 
-    fun getLocation(){
+    private fun getLocation() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity as Activity)
         doAsync {
             fusedLocationClient.lastLocation.addOnCompleteListener { task ->
@@ -102,7 +110,7 @@ class WeatherFragment : Fragment() {
 
         override fun onPreExecute() {
             super.onPreExecute()
-            if(::progressbar.isInitialized && ::linearLayoutMain.isInitialized && ::errorMsg.isInitialized && ::errorIcon.isInitialized && ::weatherBackground.isInitialized) {
+            if (::progressbar.isInitialized && ::linearLayoutMain.isInitialized && ::errorMsg.isInitialized && ::errorIcon.isInitialized && ::weatherBackground.isInitialized) {
                 progressbar.visibility = View.VISIBLE
                 linearLayoutMain.visibility = View.GONE
                 errorMsg.visibility = View.GONE
@@ -113,16 +121,17 @@ class WeatherFragment : Fragment() {
         }
 
         override fun doInBackground(vararg params: String?): String? {
-            var response:String?
+            var response: String?
 
-            try{
+            try {
                 Log.d("dbg", "$latitude, $longitude")
-                response = URL("https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&units=metric&appid=$apiKey").readText(
-                    Charsets.UTF_8
-                )
+                response =
+                    URL("https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&units=metric&appid=$apiKey").readText(
+                        Charsets.UTF_8
+                    )
                 Log.d("dbg", "resp $response")
 
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 response = null
                 Log.d("dbg", "$e")
             }
@@ -187,8 +196,8 @@ class WeatherFragment : Fragment() {
         }
     }
 
-    private fun weatherColors(simpleWeather: String, weatherDesc: String){
-        when(simpleWeather){
+    private fun weatherColors(simpleWeather: String, weatherDesc: String) {
+        when (simpleWeather) {
             "Thunderstorm" -> {
                 weather_icon.setImageResource(R.drawable.thunder)
                 weather_background.setBackgroundResource(R.drawable.weather_background_thunder)
@@ -198,7 +207,7 @@ class WeatherFragment : Fragment() {
             "Drizzle" -> {
                 weather_icon.setImageResource(R.drawable.rain2)
                 weather_background.setBackgroundResource(R.drawable.weather_background_rain)
-                Log.d("weather","tihkusade")
+                Log.d("weather", "tihkusade")
             }
 
             "Rain" -> {
@@ -221,75 +230,75 @@ class WeatherFragment : Fragment() {
 
             "Clouds" -> {
                 // LISÄÄ PUOLIPILVINEN
-                if(weatherDesc == "few clouds: 11-25%") {
-                weather_icon.setImageResource(R.drawable.cloudy)
-                weather_background.setBackgroundResource(R.drawable.weather_background_cloudy)
-                Log.d("weather", "cloudy")
+                if (weatherDesc == "few clouds: 11-25%") {
+                    weather_icon.setImageResource(R.drawable.cloudy)
+                    weather_background.setBackgroundResource(R.drawable.weather_background_cloudy)
+                    Log.d("weather", "cloudy")
                 } else {
-                weather_icon.setImageResource(R.drawable.cloudy)
-                weather_background.setBackgroundResource(R.drawable.weather_background_cloudy)
-                Log.d("weather", "cloudy")
+                    weather_icon.setImageResource(R.drawable.cloudy)
+                    weather_background.setBackgroundResource(R.drawable.weather_background_cloudy)
+                    Log.d("weather", "cloudy")
                 }
             }
 
             "Mist" -> {
                 weather_icon.setImageResource(R.drawable.misty)
                 weather_background.setBackgroundResource(R.drawable.weather_background_misty)
-                Log.d("weather","MIST")
+                Log.d("weather", "MIST")
             }
 
             "Smoke" -> {
                 weather_icon.setImageResource(R.drawable.misty)
                 weather_background.setBackgroundResource(R.drawable.weather_background_misty)
-                Log.d("weather","MIST")
+                Log.d("weather", "MIST")
             }
 
             "Haze" -> {
                 weather_icon.setImageResource(R.drawable.misty)
                 weather_background.setBackgroundResource(R.drawable.weather_background_misty)
-                Log.d("weather","MIST")
+                Log.d("weather", "MIST")
             }
 
             "Dust" -> {
                 weather_icon.setImageResource(R.drawable.misty)
                 weather_background.setBackgroundResource(R.drawable.weather_background_misty)
-                Log.d("weather","MIST")
+                Log.d("weather", "MIST")
             }
 
             "Fog" -> {
                 weather_icon.setImageResource(R.drawable.misty)
                 weather_background.setBackgroundResource(R.drawable.weather_background_misty)
-                Log.d("weather","MIST")
+                Log.d("weather", "MIST")
             }
 
             "Sand" -> {
                 weather_icon.setImageResource(R.drawable.misty)
                 weather_background.setBackgroundResource(R.drawable.weather_background_misty)
-                Log.d("weather","MIST")
+                Log.d("weather", "MIST")
             }
 
             "Dust" -> {
                 weather_icon.setImageResource(R.drawable.misty)
                 weather_background.setBackgroundResource(R.drawable.weather_background_misty)
-                Log.d("weather","MIST")
+                Log.d("weather", "MIST")
             }
 
             "Ash" -> {
                 weather_icon.setImageResource(R.drawable.misty)
                 weather_background.setBackgroundResource(R.drawable.weather_background_misty)
-                Log.d("weather","MIST")
+                Log.d("weather", "MIST")
             }
 
             "Squall" -> {
                 weather_icon.setImageResource(R.drawable.misty)
                 weather_background.setBackgroundResource(R.drawable.weather_background_misty)
-                Log.d("weather","MIST")
+                Log.d("weather", "MIST")
             }
 
             "Tornado" -> {
                 weather_icon.setImageResource(R.drawable.misty)
                 weather_background.setBackgroundResource(R.drawable.weather_background_misty)
-                Log.d("weather","MIST")
+                Log.d("weather", "MIST")
             }
 
             else -> {

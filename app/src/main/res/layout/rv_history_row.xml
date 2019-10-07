@@ -27,19 +27,19 @@
 
         <TextView
             android:id="@+id/textView_distance"
-            android:textColor="#F2000000"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textColor="#F2000000"
             android:textSize="28sp" />
 
         <TextView
             android:id="@+id/textView_time"
-            android:textColor="#F2000000"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textAlignment="textEnd"
+            android:textColor="#F2000000"
             android:textSize="28sp" />
     </LinearLayout>
 
