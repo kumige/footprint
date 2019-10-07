@@ -46,6 +46,7 @@ class WeatherFragment : Fragment() {
 
     lateinit var cityName: String
     lateinit var countryName: String
+    lateinit var countryCode: String
 
 
     override fun onCreateView(
@@ -100,6 +101,7 @@ class WeatherFragment : Fragment() {
 
                 cityName = addresses.get(0).getLocality()
                 countryName = addresses.get(0).getCountryName()
+                countryCode = addresses.get(0).countryCode
 
                 weatherTask().execute()
             }
@@ -178,7 +180,7 @@ class WeatherFragment : Fragment() {
 
                 textView_temperature.text = tempString
                 textView_weather.text = weatherDescription
-                textView_weatherLocation.text = "$cityName, $countryName"
+                textView_weatherLocation.text = "$cityName"
                 weatherColors(weatherSimple, weatherDescription)
 
                 progressbar.visibility = View.GONE
