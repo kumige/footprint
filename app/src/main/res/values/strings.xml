@@ -4,9 +4,10 @@
     <string name="start_run">Start run</string>
     <string name="past_runs">Past runs</string>
     <string name="recent_runs">Recent runs</string>
-    <string name="tts_with_hours">Distance: %1$s kilometers. Time: %2$s hours, %3$s minutes, %4$s seconds</string>
-    <string name="tts_with_minutes">Distance: %1$s kilometers. Time: %2$s minutes, %1$s seconds</string>
-    <string name="tts_with_seconds">Distance: %1$s kilometers. Time: %2$d seconds</string>
+    <string name="tts_with_hours">Distance: %1$s kilometers. Time: %2$s hours, %3$s minutes, %4$s seconds. Pace: %5$s minutes per kilometer</string>
+    <string name="tts_with_minutes">Distance: %1$s kilometers. Time: %2$s minutes, %3$s seconds. Pace: %4$s minutes per kilometer</string>
+    <string name="tts_with_seconds">Distance: %1$s kilometers. Time: %2$d seconds.</string>
+    <string name="tts_pace">Pace: %1$s minutes per kilometer</string>
     <string name="timer_placeholder">00:00:00</string>
     <string name="distance_placeholder">0.00 km</string>
     <string name="time_distance_placeholder">0 km in 00:00:00</string>
@@ -17,4 +18,5 @@
     <string name="pace">Pace: %1$s min / km</string>
     <string name="btn_start_run">START RUN</string>
     <string name="btn_stop_run">STOP RUN</string>
+
 </resources>

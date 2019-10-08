@@ -10,6 +10,7 @@ import com.google.gson.Gson
 const val FORMAT_TIMER_CLOCK = 0
 const val FORMAT_TIMER_PROFILE = 1
 const val FORMAT_TIMER_TTS = 2
+const val FORMAT_TIMER_TOTAL_MINUTES = 3
 
 class Utils {
 
@@ -19,10 +20,12 @@ class Utils {
     fun formatTimer(time: Int, originCode: Int): String {
         var sec = time
         var min = 0
+        var totalMinutes = 0
         var h = 0
 
         if (sec / 60 > 0) {
             min = sec / 60
+            totalMinutes = sec / 60
             sec -= 60 * min
         }
 
@@ -54,6 +57,7 @@ class Utils {
                 h == 0 -> "$min:$seconds"
                 else -> "$h:$min:$seconds"
             }
+            3 -> return "$totalMinutes"
             else -> "$hours:$minutes:$seconds"
         }
 

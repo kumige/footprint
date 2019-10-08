@@ -2,6 +2,8 @@ package com.example.sensorapp
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,7 +17,7 @@ import java.time.LocalDateTime
 class ProfileActivity : AppCompatActivity() {
 
     private lateinit var name: String
-    private lateinit var history: List<History>
+    private lateinit var history: MutableList<History>
 
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var adapter: HistoryRecyclerAdapter
@@ -33,7 +35,6 @@ class ProfileActivity : AppCompatActivity() {
         linearLayoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = linearLayoutManager
         recyclerView.addItemDecoration(DividerItemDecoration(applicationContext, DividerItemDecoration.VERTICAL))
-
     }
 
     private fun loadProfileData() {
