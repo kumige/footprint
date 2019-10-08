@@ -74,6 +74,14 @@ interface dao {
     @Query("DELETE FROM history WHERE id = :historyId")
     fun deleteFromHistory(historyId: Int)
 
+    //Dev only
+    @Query("SELECT * FROM user")
+    fun getUser(): List<User>
+
+    @Delete
+    fun deleteUserName(vararg user: User)
+
+
     //@Update
     //fun updateTodo(vararg todos: TodoEntity)*/
 }
