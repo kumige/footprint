@@ -17,10 +17,10 @@ class NameAddingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_addname)
 
-        btn_addName.setOnClickListener{ addNane()}
+        btn_addName.setOnClickListener{ addName()}
     }
 
-    fun addNane(){
+    fun addName(){
         var name = editText_name.text.toString()
         name = name.trim()
         Log.d("Name","$name")
