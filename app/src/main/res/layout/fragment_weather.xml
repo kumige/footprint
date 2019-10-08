@@ -16,15 +16,14 @@
             android:layout_width="match_parent"
             android:layout_height="134dp"
             android:background="@drawable/round_corner"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp" />
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp" />
 
         <ProgressBar
             android:id="@+id/loader"
             style="?android:attr/progressBarStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
             android:layout_marginTop="32dp" />
 
         <ImageView
@@ -55,7 +54,8 @@
                 android:id="@+id/weather_refresh"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:gravity="right"
+                android:gravity="end"
+                android:layout_marginEnd="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_refresh_white_24dp" />
@@ -85,9 +85,10 @@
                         android:id="@+id/textView_weather"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:gravity="left"
-                        android:paddingLeft="32dp"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginEnd="0dp"
+                        android:gravity="start"
                         android:textColor="#F7F7F7"
                         android:textSize="30sp"
                         android:textStyle="bold" />
@@ -96,9 +97,10 @@
                         android:id="@+id/textView_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
                         android:layout_marginTop="-8dp"
-                        android:gravity="left"
-                        android:paddingLeft="32dp"
+                        android:layout_marginEnd="0dp"
+                        android:gravity="start"
                         android:textColor="#F7F7F7"
                         android:textSize="45sp"
                         android:textStyle="bold" />
@@ -107,10 +109,10 @@
                         android:id="@+id/textView_weatherLocation"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
                         android:layout_marginTop="-8dp"
-                        android:gravity="left"
-                        android:paddingLeft="32dp"
-                        android:paddingBottom="0dp"
+                        android:layout_marginEnd="0dp"
+                        android:gravity="start"
                         android:textColor="#F7F7F7"
                         android:textSize="24sp" />
 
@@ -120,9 +122,10 @@
                     android:id="@+id/weather_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="right"
+                    android:gravity="end"
+                    android:paddingStart="0dp"
                     android:paddingTop="16dp"
-                    android:paddingRight="-16dp"
+                    android:paddingEnd="-16dp"
                     android:paddingBottom="16dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

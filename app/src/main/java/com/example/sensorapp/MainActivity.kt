@@ -26,6 +26,22 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Checks if user has already set a name
+        val db = Room.databaseBuilder(
+            this,
+            AppDatabase::class.java, "user.db"
+        ).build()
+        doAsync {
+            var user = db.dao().getUsername()
+            var users = db.dao().getUser()
+            Log.d("asd","users: $users")
+            //db.dao().deleteUserName(User(16, "d"))
+            Log.d("asd","$user")
+            if(user == null){
+                addName()
+            }
+        }
+
         cardView_profile.setOnClickListener {
             val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)
@@ -36,6 +52,12 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
         checkPermission()
+    }
+
+    // Opens an activity where user sets the name for the first time
+    fun addName(){
+        val intent = Intent(this, NameAddingActivity::class.java)
+        startActivity(intent)
     }
 
     private fun checkPermission() {

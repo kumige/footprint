@@ -154,7 +154,7 @@ class WeatherFragment : Fragment() {
                 val sunrise: Long = sys.getLong("sunrise")
                 val sunset: Long = sys.getLong("sunset")
                 val windSpeed = wind.getString("speed")
-                val weatherDescription = weather.getString("description")
+                var weatherDescription = weather.getString("description")
                 val weatherSimple = weather.getString("main")
                 //val temp = main.getString("temp") + "°C"
 
@@ -170,9 +170,14 @@ class WeatherFragment : Fragment() {
                 Log.d("weather", "${weatherSimple}, ${weatherDescription}")
 
                 textView_temperature.text = tempString
-                textView_weather.text = weatherDescription
                 textView_weatherLocation.text = "$cityName"
                 weatherColors(weatherSimple, weatherDescription)
+
+
+                //weatherDescription = weatherDescription.replace("\\s".toRegex(), "_")
+                //weatherDescription = weatherDescription.toLowerCase()
+                Log.d("weather", "weather name: ${weatherDescription}")
+                textView_weather.text = weatherDescription
 
                 progressbar.visibility = View.GONE
                 linearLayoutMain.visibility = View.VISIBLE
