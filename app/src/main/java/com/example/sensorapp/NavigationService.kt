@@ -1,33 +1,25 @@
 package com.example.sensorapp
 
-import android.app.*
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.Service
 import android.content.Intent
 import android.location.Location
 import android.os.*
+import android.speech.tts.TextToSpeech
+import android.speech.tts.Voice
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.room.Room
 import com.google.android.gms.location.*
 import org.jetbrains.anko.doAsync
-import org.osmdroid.util.Distance
 import org.osmdroid.util.GeoPoint
 import org.threeten.bp.LocalDateTime
-import java.lang.Exception
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import android.speech.tts.TextToSpeech
-import android.speech.tts.Voice
-import kotlinx.android.synthetic.main.activity_texttospeech.*
-import org.jetbrains.anko.notificationManager
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.util.*
 import kotlin.collections.HashSet
-import kotlin.math.*
 
 
 const val CHANNEL_ID = "channel_01"
@@ -43,7 +35,9 @@ class NavigationService : Service(), TextToSpeech.OnInitListener {
     private var messenger: Messenger? = null
     private var trackedPoints = mutableListOf<GeoPoint>()
     private lateinit var previousPoint: GeoPoint
+    private var previousPointTime = 0
     private var totalDistance = 0.0
+    private var verifiedPoint = false
     private lateinit var startTime: LocalDateTime
     private lateinit var endTime: LocalDateTime
     private var runTime = 0
@@ -115,7 +109,8 @@ class NavigationService : Service(), TextToSpeech.OnInitListener {
 
                     // Update UI with location data
                     val geoPoint = GeoPoint(location.latitude, location.longitude)
-                    Log.d("dbg", "$geoPoint")
+
+                    verifiedPoint = false
 
                     // Calculate moved distance
                     if (::previousPoint.isInitialized) {
@@ -127,15 +122,25 @@ class NavigationService : Service(), TextToSpeech.OnInitListener {
                         locB.latitude = previousPoint.latitude
                         locB.longitude = previousPoint.longitude
 
-                        totalDistance += locA.distanceTo(locB)
+                        val interDistance = locA.distanceTo(locB)
+                        val aToBTime = runTime - previousPointTime
+
+                        // Check if the new location is not just the GPS flying all over the place
+                        if (aToBTime > 0 && interDistance / aToBTime < 13) {
+                            Log.d("dbg", "interDistance: $interDistance, aToBTime: $aToBTime, speed: ${interDistance / aToBTime}")
+                            totalDistance += interDistance
+                            verifiedPoint = true
+                        }
                     }
+                    previousPointTime = runTime
 
                     // TTS voice gives information about run every kilometer
                     if (ttsDistance + 1000 < totalDistance) {
                         val time = Utils().formatTimer(runTime, FORMAT_TIMER_TTS)
-                        var hours = ""
-                        var minutes = ""
-                        var seconds = ""
+                        val pace = (totalDistance / Utils().formatTimer(runTime, FORMAT_TIMER_TOTAL_MINUTES).toDouble()).toString()
+                        var hours: String
+                        var minutes: String
+                        var seconds: String
                         val distanceInKm =
                             BigDecimal(totalDistance / 1000).setScale(2, RoundingMode.HALF_EVEN)
                         when {
@@ -144,13 +149,15 @@ class NavigationService : Service(), TextToSpeech.OnInitListener {
                                 hours = splitTime[0]
                                 minutes = splitTime[1]
                                 seconds = splitTime[2]
-                                tts.speak(
+
+                                        tts.speak(
                                     getString(
                                         R.string.tts_with_hours,
                                         distanceInKm,
                                         hours,
                                         minutes,
-                                        seconds
+                                        seconds,
+                                        pace
                                     )
                                     ,
                                     TextToSpeech.QUEUE_FLUSH,
@@ -167,7 +174,8 @@ class NavigationService : Service(), TextToSpeech.OnInitListener {
                                         R.string.tts_with_minutes,
                                         distanceInKm,
                                         minutes,
-                                        seconds
+                                        seconds,
+                                        pace
                                     ),
                                     TextToSpeech.QUEUE_FLUSH,
                                     null,
@@ -187,18 +195,21 @@ class NavigationService : Service(), TextToSpeech.OnInitListener {
                     }
                     previousPoint = geoPoint
 
-                    // Send location update to UI thread
-                    trackedPoints.add(geoPoint)
-                    val locationMsg = Message()
-                    locationMsg.obj = geoPoint
-                    locationMsg.what = LOCATION_UPDATE
-                    messenger?.send(locationMsg)
+                    if (verifiedPoint) {
+                        // Send location update to UI thread
+                        trackedPoints.add(geoPoint)
+                        val locationMsg = Message()
+                        locationMsg.obj = geoPoint
+                        locationMsg.what = LOCATION_UPDATE
+                        messenger?.send(locationMsg)
 
-                    // Send distance update to UI thread
-                    val distanceMsg = Message()
-                    distanceMsg.obj = totalDistance.toInt()
-                    distanceMsg.what = DISTANCE_UPDATE
-                    messenger?.send(distanceMsg)
+                        // Send distance update to UI thread
+                        val distanceMsg = Message()
+                        distanceMsg.obj = totalDistance.toInt()
+                        distanceMsg.what = DISTANCE_UPDATE
+                        messenger?.send(distanceMsg)
+                    }
+
                 }
             }
         }

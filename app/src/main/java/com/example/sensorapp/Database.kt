@@ -60,10 +60,10 @@ interface dao {
     fun getUsername(): String
 
     @Query("SELECT * FROM history")
-    fun getAllHistory(): List<History>
+    fun getAllHistory(): MutableList<History>
 
     @Query("SELECT * FROM history WHERE id = :historyId")
-    fun getHistory(historyId: Int): List<History>
+    fun getHistory(historyId: Int): MutableList<History>
 
     @Insert
     fun insertName(user: User)
@@ -71,8 +71,8 @@ interface dao {
     @Insert
     fun insertRun(data: History)
 
-    @Delete
-    fun deleteFromHistory(vararg history: History)
+    @Query("DELETE FROM history WHERE id = :historyId")
+    fun deleteFromHistory(historyId: Int)
 
     //Dev only
     @Query("SELECT * FROM user")

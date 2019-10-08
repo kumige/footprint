@@ -8,6 +8,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
 import android.os.*
 import android.preference.PreferenceManager
 import android.util.Log
@@ -42,9 +43,6 @@ class MapActivity : AppCompatActivity(), TrackingHandler.AppReceiver {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
 
-        val actionbar = supportActionBar
-        //actionbar?.title = "Map"
-
         btn_startRun.setOnClickListener { startRun() }
         btn_stopRun.setOnClickListener { stopRun() }
 
@@ -57,6 +55,7 @@ class MapActivity : AppCompatActivity(), TrackingHandler.AppReceiver {
         map.controller.setZoom(18.0)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
     }
 
     @SuppressLint("SetTextI18n")
@@ -97,31 +96,29 @@ class MapActivity : AppCompatActivity(), TrackingHandler.AppReceiver {
 
     // Set a marker on given location
     private fun setMarker(geoPoint: GeoPoint) {
-        if (requestingLocationUpdates) {
             val marker = Marker(map)
             marker.icon = getDrawable(R.drawable.location_marker)
             marker.position = geoPoint
             marker.setAnchor(0.2.toFloat(), 0.2.toFloat())
+            map.overlays.clear()
             map.overlays.add(marker)
-        }
     }
 
     override fun onResume() {
         super.onResume()
-        //requestingLocationUpdates = true
-        fusedLocationClient.lastLocation.addOnCompleteListener(this) { task ->
-            if (task.isSuccessful && task.result != null) {
-                val startPoint = GeoPoint(task.result!!.latitude, task.result!!.longitude)
-                map.controller.setCenter(startPoint)
-                setMarker(startPoint)
-            }
-        }
-        //if (checkLocationPermission()) startRun()
-    }
 
-    override fun onPause() {
-        super.onPause()
-        //requestingLocationUpdates = false
+        // Set initial location
+        if (!requestingLocationUpdates) {
+            fusedLocationClient.lastLocation
+                .addOnSuccessListener { location : Location? ->
+                    if (location != null) {
+                        val geoPoint = GeoPoint(location.latitude, location.longitude)
+                        map.controller.setCenter(geoPoint)
+                        map.overlay.clear()
+                        setMarker(geoPoint)
+                    }
+                }
+        }
     }
 
     override fun onDestroy() {
@@ -131,9 +128,9 @@ class MapActivity : AppCompatActivity(), TrackingHandler.AppReceiver {
             map.overlays.clear()
             map.invalidate()
         }
-        Log.d("dbg", "MapActivity onDestroy")
     }
 
+    // Start NavigationService
     private fun startRun() {
         requestingLocationUpdates = true
         btn_startRun.visibility = Button.GONE
@@ -144,6 +141,7 @@ class MapActivity : AppCompatActivity(), TrackingHandler.AppReceiver {
         startService(intent)
     }
 
+    // Stop NavigationService
     private fun stopRun() {
         requestingLocationUpdates = false
         btn_startRun.visibility = Button.VISIBLE
