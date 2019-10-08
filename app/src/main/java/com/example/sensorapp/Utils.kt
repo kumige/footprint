@@ -1,5 +1,8 @@
 package com.example.sensorapp
 
+import android.content.Context
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 import androidx.room.TypeConverter
 import com.google.gson.reflect.TypeToken
 import com.google.gson.Gson
@@ -12,7 +15,7 @@ class Utils {
 
     private val gson = Gson()
 
-    // Format timer to xx:xx:xx
+    // Format timer from seconds to to xx:xx:xx
     fun formatTimer(time: Int, originCode: Int): String {
         var sec = time
         var min = 0
@@ -54,6 +57,17 @@ class Utils {
             else -> "$hours:$minutes:$seconds"
         }
 
+    }
+
+    // Check if the user has given location permission
+    fun checkLocationPermission(context: Context): Boolean {
+        return ContextCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
     @TypeConverter

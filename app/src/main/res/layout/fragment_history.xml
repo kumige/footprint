@@ -11,7 +11,7 @@
         android:id="@+id/textView_frag_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Your previous runs"
+        android:text="@string/recent_runs"
         android:textColor="@color/colortext"
         android:paddingBottom="8dp"
         android:textSize="24sp"

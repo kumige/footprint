@@ -27,7 +27,8 @@
             android:name=".NavigationService"
             android:permission="ACCESS_FINE_LOCATION"></service>
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

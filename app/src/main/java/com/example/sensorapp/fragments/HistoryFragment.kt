@@ -1,6 +1,7 @@
 package com.example.sensorapp.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +20,6 @@ import org.jetbrains.anko.uiThread
 class HistoryFragment: Fragment() {
 
     private lateinit var history: List<History>
-
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var adapter: MainRecyclerAdapter
     private lateinit var recyclerView: RecyclerView
@@ -42,11 +42,6 @@ class HistoryFragment: Fragment() {
         loadProfileData()
     }
 
-    override fun onResume() {
-        super.onResume()
-        loadProfileData()
-    }
-
     private fun loadProfileData() {
         val db = Room.databaseBuilder(
             activity!!.applicationContext,
@@ -57,6 +52,7 @@ class HistoryFragment: Fragment() {
             history = db.dao().getAllHistory()
             adapter = MainRecyclerAdapter(history)
             fragmentHistoryRecyclerView.adapter = adapter
+            Log.d("dbg", "history: $history")
         }
     }
 

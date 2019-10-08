@@ -62,7 +62,7 @@
                 android:backgroundTint="#FFFFFF"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
-                android:text="Previous runs"
+                android:text="@string/past_runs"
                 android:textColor="#F2000000"
                 android:textSize="24sp" />
 
