@@ -27,6 +27,7 @@ import android.os.Build
 import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.core.content.ContextCompat
+import org.jetbrains.anko.custom.async
 
 
 class WeatherFragment : Fragment() {
@@ -45,8 +46,6 @@ class WeatherFragment : Fragment() {
     lateinit var weatherBackground: ImageView
 
     lateinit var cityName: String
-    lateinit var countryName: String
-    lateinit var countryCode: String
 
 
     override fun onCreateView(
@@ -64,25 +63,28 @@ class WeatherFragment : Fragment() {
         weatherBackground = view.findViewById(R.id.weather_background)
         weatherRefresh = view.findViewById(R.id.weather_refresh)
         weatherRefresh.setOnClickListener { refreshWeather() }
+        locationCheck()
         return view
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    private fun locationCheck(){
         if (Utils().checkLocationPermission(activity!!.applicationContext)) getLocation()
         else {
             Toast.makeText(
                 activity!!.applicationContext,
-                "You must give access to your location for this app to work correctly.",
+                getString(R.string.weather_noLocationErrorToast),
                 Toast.LENGTH_LONG
             ).show()
+            errorLayout()
+            errorMsg.text = getString(R.string.weather_noLocationError)
         }
     }
 
     private fun refreshWeather() {
         weatherRefresh.startAnimation(AnimationUtils.loadAnimation(thiscontext, R.anim.anim))
-        getLocation()
+        if (Utils().checkLocationPermission(activity!!.applicationContext)) {
+            getLocation()
+        }
     }
 
     private fun getLocation() {
@@ -93,15 +95,13 @@ class WeatherFragment : Fragment() {
                 longitude = task.result?.longitude
                 Log.d("dbg", "fusedLocationClient $latitude, $longitude")
 
-                // Get city/country
+                // Gets city/country
                 val geocoder = Geocoder(thiscontext, Locale.getDefault())
                 var addresses = listOf<Any>()
                 addresses = geocoder.getFromLocation(latitude!!, longitude!!, 1)
                 Log.d("dbg", "address $addresses")
 
                 cityName = addresses.get(0).getLocality()
-                countryName = addresses.get(0).getCountryName()
-                countryCode = addresses.get(0).countryCode
 
                 weatherTask().execute()
             }
@@ -111,6 +111,8 @@ class WeatherFragment : Fragment() {
     inner class weatherTask : AsyncTask<String, Void, String>() {
 
         override fun onPreExecute() {
+
+            // Shows only progress bar and hides error/weather layouts
             super.onPreExecute()
             if (::progressbar.isInitialized && ::linearLayoutMain.isInitialized && ::errorMsg.isInitialized && ::errorIcon.isInitialized && ::weatherBackground.isInitialized) {
                 progressbar.visibility = View.VISIBLE
@@ -124,7 +126,6 @@ class WeatherFragment : Fragment() {
 
         override fun doInBackground(vararg params: String?): String? {
             var response: String?
-
             try {
                 Log.d("dbg", "$latitude, $longitude")
                 response =
@@ -132,7 +133,6 @@ class WeatherFragment : Fragment() {
                         Charsets.UTF_8
                     )
                 Log.d("dbg", "resp $response")
-
             } catch (e: Exception) {
                 response = null
                 Log.d("dbg", "$e")
@@ -147,7 +147,6 @@ class WeatherFragment : Fragment() {
                 val jsonObj = JSONObject(result)
                 val main = jsonObj.getJSONObject("main")
                 val sys = jsonObj.getJSONObject("sys")
-                val wind = jsonObj.getJSONObject("wind")
                 val weather = jsonObj.getJSONArray("weather").getJSONObject(0)
 
                 val updatedAt: Long = jsonObj.getLong("dt")
@@ -155,54 +154,59 @@ class WeatherFragment : Fragment() {
                     "Updated at: " + SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.ENGLISH).format(
                         Date(updatedAt * 1000)
                     )
-                val tempMin = "Min Temp: " + main.getString("temp_min") + "°C"
-                val tempMax = "Max Temp: " + main.getString("temp_max") + "°C"
-                val pressure = main.getString("pressure")
-                val humidity = main.getString("humidity")
-
-                val sunrise: Long = sys.getLong("sunrise")
-                val sunset: Long = sys.getLong("sunset")
-                val windSpeed = wind.getString("speed")
-                var weatherDescription = weather.getString("description")
+                val weatherDescription = weather.getString("description")
                 val weatherSimple = weather.getString("main")
-                //val temp = main.getString("temp") + "°C"
-
-                val address = jsonObj.getString("name") + ", " + sys.getString("country")
 
                 // Rounding temperature
                 val tempINT = main.getString("temp")
-                Log.d("weather", "tempint: ${tempINT}")
                 val tempRounded = BigDecimal(tempINT).setScale(0, RoundingMode.HALF_EVEN).toString()
-                Log.d("weather", "temprounded: ${tempRounded}")
-
                 val tempString = "$tempRounded°C"
+
+                Log.d("weather", "tempint: ${tempINT}")
+                Log.d("weather", "temprounded: ${tempRounded}")
                 Log.d("weather", "${weatherSimple}, ${weatherDescription}")
 
+                // Sets temperature, city and background
                 textView_temperature.text = tempString
                 textView_weatherLocation.text = "$cityName"
                 weatherColors(weatherSimple, weatherDescription)
 
-
-                //weatherDescription = weatherDescription.replace("\\s".toRegex(), "_")
-                //weatherDescription = weatherDescription.toLowerCase()
-                Log.d("weather", "weather name: ${weatherDescription}")
-                textView_weather.text = weatherDescription
-
+                // Sets the layout visible and hides progressbar
                 progressbar.visibility = View.GONE
                 linearLayoutMain.visibility = View.VISIBLE
                 weatherBackground.visibility = View.VISIBLE
                 weatherRefresh.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
+
+                // Gets the correct weather name from R.string
+                var newWeatherDescription = weatherDescription
+                newWeatherDescription = newWeatherDescription.replace("\\s".toRegex(), "_")
+                newWeatherDescription = newWeatherDescription.replace("/", "")
+                newWeatherDescription = newWeatherDescription.toLowerCase()
+                Log.d("weather", "weather name: ${newWeatherDescription}")
+                var string = getStringWithResKey(newWeatherDescription)
+                Log.d("weather", "id: ${string}")
+                textView_weather.text = string
             } catch (e: Exception) {
-                linearLayoutMain.visibility = View.GONE
-                progressbar.visibility = View.GONE
-                weatherBackground.visibility = View.GONE
-                errorMsg.visibility = View.VISIBLE
-                errorIcon.visibility = View.VISIBLE
-                weatherRefresh.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP)
+                errorLayout()
             }
         }
     }
 
+    // Gets the correct R.string
+    private fun getStringWithResKey(nameResKey: String): String {
+        var packageName = thiscontext.getPackageName()
+        val resId = resources.getIdentifier(nameResKey, "string", packageName)
+        return try {
+            getString(resId)
+        } catch (e: Exception) {
+            errorLayout()
+            errorMsg.text = getString(R.string.weather_invalidWeatherError)
+            Log.e("weather", "Couldn't find string value for key '$nameResKey'", e)
+            ""
+        }
+    }
+
+    // Gets the correct weather background and weather image
     private fun weatherColors(simpleWeather: String, weatherDesc: String) {
         when (simpleWeather) {
             "Thunderstorm" -> {
@@ -236,10 +240,9 @@ class WeatherFragment : Fragment() {
             }
 
             "Clouds" -> {
-                // LISÄÄ PUOLIPILVINEN
-                if (weatherDesc == "few clouds: 11-25%") {
-                    weather_icon.setImageResource(R.drawable.cloudy)
-                    weather_background.setBackgroundResource(R.drawable.weather_background_cloudy)
+                if (weatherDesc == "few clouds") {
+                    weather_icon.setImageResource(R.drawable.sun_n_cloud)
+                    weather_background.setBackgroundResource(R.drawable.weather_background_sun_n_cloud)
                     Log.d("weather", "cloudy")
                 } else {
                     weather_icon.setImageResource(R.drawable.cloudy)
@@ -309,15 +312,20 @@ class WeatherFragment : Fragment() {
             }
 
             else -> {
-                weatherRefresh.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP)
-                weatherBackground.visibility = View.GONE
-                progressbar.visibility = View.GONE
-                linearLayoutMain.visibility = View.GONE
-                errorMsg.visibility = View.VISIBLE
-                errorIcon.visibility = View.VISIBLE
-                errorMsg.text = "Error: Invalid weather"
+                errorLayout()
+                errorMsg.text = getString(R.string.weather_invalidWeatherError)
                 Log.d("weather", "Invalid weather")
             }
         }
+    }
+
+    // If error occurs while getting the weather, hides weather layout and shows an error
+    private fun errorLayout(){
+        linearLayoutMain.visibility = View.GONE
+        progressbar.visibility = View.GONE
+        weatherBackground.visibility = View.GONE
+        errorMsg.visibility = View.VISIBLE
+        errorIcon.visibility = View.VISIBLE
+        weatherRefresh.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP)
     }
 }

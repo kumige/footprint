@@ -23,9 +23,9 @@ class NameAddingActivity : AppCompatActivity() {
     fun addNane(){
         var name = editText_name.text.toString()
         name = name.trim()
-        Log.d("asd","$name")
+        Log.d("Name","$name")
         if(!name.isBlank()){
-            Log.d("asd","$name")
+            Log.d("Name","$name")
             val db = Room.databaseBuilder(
                 this,
                 AppDatabase::class.java, "user.db"
@@ -35,7 +35,7 @@ class NameAddingActivity : AppCompatActivity() {
                 goMainActivity()
             }
         } else {
-            name_errorMsg.text = " Name can not be empty"
+            name_errorMsg.text = getString(R.string.name_errorMsg)
             name_errorMsg.visibility = View.VISIBLE
         }
     }

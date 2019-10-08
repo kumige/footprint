@@ -17,4 +17,84 @@
     <string name="pace">Pace: %1$s min / km</string>
     <string name="btn_start_run">START RUN</string>
     <string name="btn_stop_run">STOP RUN</string>
+
+    <!-- Weather fragment -->
+    <string name="weather_noLocationErrorToast">You must give access to your location for this app to work correctly.</string>
+    <string name="weather_noLocationError">You must give access to your location to show the weather.</string>
+    <string name="weather_backgroundContentDescription">Weather background</string>
+    <string name="weather_errorIconContentDescription">Error icon</string>
+    <string name="weather_refreshIconContentDescription">Refresh icon</string>
+    <string name="weather_weatherImageContentDescription">Image representing current weather</string>
+    <string name="weather_invalidWeatherError">Error: Could not get weather</string>
+    <string name="weather_loadError">Error: Could not load weather</string>
+
+    <!-- Weathers -->
+    <string name="thunderstorm_with_light_rain">Thunderstorm</string>
+    <string name="thunderstorm_with_rain">Thunderstorm</string>
+    <string name="thunderstorm_with_heavy_rain">Thunderstorm</string>
+    <string name="light_thunderstorm">Thunderstorm</string>
+    <string name="thunderstorm">Thunderstorm</string>
+    <string name="heavy_thunderstorm">Thunderstorm</string>
+    <string name="ragged_thunderstorm">Thunderstorm</string>
+    <string name="thunderstorm_with_light_drizzle">Thunderstorm</string>
+    <string name="thunderstorm_with_drizzle">Thunderstorm</string>
+    <string name="thunderstorm_with_heavy_drizzle">Thunderstorm</string>
+
+    <string name="light_intensity_drizzle">Drizzle</string>
+    <string name="drizzle">Drizzle</string>
+    <string name="heavy_intensity_drizzle">Drizzle</string>
+    <string name="drizzle_rain">Drizzle</string>
+    <string name="heavy_intensity_drizzle_rain">Drizzle</string>
+    <string name="shower_rain_and_drizzle">Drizzle</string>
+    <string name="heavy_shower_rain_and_drizzle">Drizzle</string>
+    <string name="shower_drizzle">Drizzle</string>
+
+    <string name="light_rain">Light rain</string>
+    <string name="moderate_rain">Rain</string>
+    <string name="heavy_intensity_rain">Rain</string>
+    <string name="very_heavy_rain">Rain</string>
+    <string name="extreme_rain">Rain</string>
+    <string name="freezing_rain">Rain</string>
+    <string name="light_intensity_shower_rain">Rain</string>
+    <string name="shower_rain">Rain</string>
+    <string name="heavy_intensity_shower_rain">Rain</string>
+    <string name="ragged_shower_rain">Rain</string>
+
+    <string name="light_snow">Snow</string>
+    <string name="Snow">Snow</string>
+    <string name="Heavy_snow">Snow</string>
+    <string name="Sleet">Snow</string>
+    <string name="Light_shower_sleet">Snow</string>
+    <string name="Shower_sleet">Snow</string>
+    <string name="Light_rain_and_snow">Snow</string>
+    <string name="Rain_and_snow">Snow</string>
+    <string name="Light_shower_snow">Snow</string>
+    <string name="Shower_snow">Snow</string>
+    <string name="Heavy_shower_snow">Snow</string>
+
+    <string name="mist">Mist</string>
+    <string name="Smoke">Mist</string>
+    <string name="Haze">Mist</string>
+    <string name="sand_dust_whirls">Mist</string>
+    <string name="fog">Mist</string>
+    <string name="sand">Mist</string>
+    <string name="dust">Mist</string>
+    <string name="volcanic_ash">Mist</string>
+    <string name="squalls">Mist</string>
+    <string name="tornado">Mist</string>
+
+    <string name="clear_sky">Clear sky</string>
+
+    <string name="few_clouds">Cloudy</string>
+    <string name="scattered_clouds">Cloudy</string>
+    <string name="broken_clouds">Cloudy</string>
+    <string name="overcast_clouds">Cloudy</string>
+
+    <!-- Name adding strings -->
+    <string name="name_enterName">Enter your name here</string>
+    <string name="name_enterNameAutofillHint">username</string>
+    <string name="name_btn_enter">Enter</string>
+    <string name="name_errorMsg">Name can not be empty</string>
+    <string name="name_LogoContentDescription">App logo</string>
+
 </resources>

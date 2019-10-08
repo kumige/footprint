@@ -15,7 +15,8 @@
             android:id="@+id/weather_background"
             android:layout_width="match_parent"
             android:layout_height="134dp"
-            android:background="@drawable/round_corner" />
+            android:background="@drawable/round_corner"
+            android:contentDescription="@string/weather_backgroundContentDescription" />
 
         <ProgressBar
             android:id="@+id/loader"
@@ -29,6 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="28dp"
+            android:contentDescription="@string/weather_errorIconContentDescription"
             android:visibility="gone"
             app:srcCompat="@drawable/ic_action_name"
             tools:srcCompat="@drawable/ic_action_name" />
@@ -39,7 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="56dp"
             android:gravity="center"
-            android:text="Error: Could not load weather"
+            android:text="@string/weather_loadError"
             android:textColor="#000000"
             android:textStyle="bold"
             android:visibility="gone" />
@@ -52,8 +54,9 @@
                 android:id="@+id/weather_refresh"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:gravity="end"
                 android:layout_marginEnd="8dp"
+                android:contentDescription="@string/weather_refreshIconContentDescription"
+                android:gravity="end"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_refresh_white_24dp" />
@@ -120,6 +123,7 @@
                     android:id="@+id/weather_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:contentDescription="@string/weather_weatherImageContentDescription"
                     android:gravity="end"
                     android:paddingStart="0dp"
                     android:paddingTop="16dp"
