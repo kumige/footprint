@@ -18,6 +18,9 @@
     <string name="pace">Pace: %1$s min / km</string>
     <string name="btn_start_run">START RUN</string>
     <string name="btn_stop_run">STOP RUN</string>
+    <string name="btn_no_runs">No tracked runs found. Get running!</string>
+    <string name="cd_profile">Profile logo</string>
+    <string name="cd_arrow">Arrow image</string>
 
     <!-- Weather fragment -->
     <string name="weather_noLocationErrorToast">You must give access to your location for this app to work correctly.</string>

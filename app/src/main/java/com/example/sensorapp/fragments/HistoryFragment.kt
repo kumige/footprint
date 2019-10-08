@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.fragment_history.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
-class HistoryFragment: Fragment() {
+class HistoryFragment : Fragment() {
 
     private lateinit var history: List<History>
     private lateinit var linearLayoutManager: LinearLayoutManager
@@ -33,13 +33,26 @@ class HistoryFragment: Fragment() {
         recyclerView = rootView.findViewById(R.id.fragmentHistoryRecyclerView)
         linearLayoutManager = LinearLayoutManager(activity!!.applicationContext)
         recyclerView.layoutManager = linearLayoutManager
-        recyclerView.addItemDecoration(DividerItemDecoration(activity!!.applicationContext, DividerItemDecoration.VERTICAL))
+        recyclerView.addItemDecoration(
+            DividerItemDecoration(
+                activity!!.applicationContext,
+                DividerItemDecoration.VERTICAL
+            )
+        )
         return rootView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         loadProfileData()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (::adapter.isInitialized) {
+            adapter.notifyDataSetChanged()
+        }
     }
 
     private fun loadProfileData() {
@@ -51,8 +64,9 @@ class HistoryFragment: Fragment() {
         doAsync {
             history = db.dao().getAllHistory()
             adapter = MainRecyclerAdapter(history)
-            fragmentHistoryRecyclerView.adapter = adapter
-            Log.d("dbg", "history: $history")
+            uiThread {
+                recyclerView.adapter = adapter
+            }
         }
     }
 
