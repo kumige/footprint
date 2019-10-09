@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:backgroundTint="?attr/backgroundColor"
     tools:context=".MainActivity">
 
     <fragment
@@ -28,6 +29,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:padding="8dp"
+        app:cardBackgroundColor="?attr/backgroundCardColor"
         app:cardCornerRadius="8dp"
         app:contentPadding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -38,7 +40,7 @@
             android:id="@+id/fragLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"></LinearLayout>
+            android:orientation="horizontal" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/emptyHistoryLayout"
@@ -53,7 +55,7 @@
                 android:layout_marginEnd="8dp"
                 android:text="@string/btn_no_runs"
                 android:textAlignment="center"
-                android:textColor="@color/colortext"
+                android:textColor="?attr/primaryTextColor"
                 android:textSize="30sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -65,7 +67,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/recent_runs"
-                android:textColor="@color/colortext"
+                android:textColor="?attr/primaryTextColor"
                 android:textSize="24sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -150,12 +152,12 @@
 
                 <ImageView
                     android:id="@+id/imageView_arrow"
-                    android:contentDescription="@string/cd_arrow"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_marginStart="32dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="32dp"
+                    android:contentDescription="@string/cd_arrow"
                     app:layout_constraintBottom_toTopOf="@+id/textView2"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

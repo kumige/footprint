@@ -126,8 +126,7 @@ class NavigationService : Service(), TextToSpeech.OnInitListener {
                         val aToBTime = runTime - previousPointTime
 
                         // Check if the new location is not just the GPS flying all over the place
-                        if (aToBTime > 0 && interDistance / aToBTime < 13) {
-                            Log.d("dbg", "interDistance: $interDistance, aToBTime: $aToBTime, speed: ${interDistance / aToBTime}")
+                        if (aToBTime > 0 && interDistance / aToBTime < 12) {
                             totalDistance += interDistance
                             verifiedPoint = true
                         }
@@ -137,7 +136,7 @@ class NavigationService : Service(), TextToSpeech.OnInitListener {
                     // TTS voice gives information about run every kilometer
                     if (ttsDistance + 1000 < totalDistance) {
                         val time = Utils().formatTimer(runTime, FORMAT_TIMER_TTS)
-                        val pace = (totalDistance / Utils().formatTimer(runTime, FORMAT_TIMER_TOTAL_MINUTES).toDouble()).toString()
+                        val pace = BigDecimal(totalDistance / Utils().formatTimer(runTime, FORMAT_TIMER_TOTAL_MINUTES).toDouble()).setScale(2, RoundingMode.HALF_EVEN)
                         var hours: String
                         var minutes: String
                         var seconds: String

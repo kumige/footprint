@@ -30,6 +30,10 @@ class ProfileActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (App.isNightModeEnabled()) {
+            setTheme(R.style.DarkTheme)
+        } else setTheme(R.style.AppTheme)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
         loadProfileData()
@@ -37,6 +41,8 @@ class ProfileActivity : AppCompatActivity() {
         val actionbar = supportActionBar
         actionbar!!.title = getString(R.string.profile_title)
         actionbar.setDisplayHomeAsUpEnabled(true)
+        actionbar.setDisplayUseLogoEnabled(true)
+        actionbar.setIcon(R.drawable.brightness_4)
 
         linearLayoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = linearLayoutManager

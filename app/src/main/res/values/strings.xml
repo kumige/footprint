@@ -79,12 +79,12 @@
     <string name="heavy_intensity_shower_rain">Rain</string>
     <string name="ragged_shower_rain">Rain</string>
 
-    <string name="light_snow">Snow</string>
+    <string name="light_snow">Light snow</string>
     <string name="Snow">Snow</string>
     <string name="Heavy_snow">Snow</string>
-    <string name="Sleet">Snow</string>
-    <string name="Light_shower_sleet">Snow</string>
-    <string name="Shower_sleet">Snow</string>
+    <string name="Sleet">Sleet</string>
+    <string name="Light_shower_sleet">Sleet</string>
+    <string name="Shower_sleet">Sleet</string>
     <string name="Light_rain_and_snow">Snow</string>
     <string name="Rain_and_snow">Snow</string>
     <string name="Light_shower_snow">Snow</string>
@@ -95,7 +95,7 @@
     <string name="Smoke">Mist</string>
     <string name="Haze">Mist</string>
     <string name="sand_dust_whirls">Mist</string>
-    <string name="fog">Mist</string>
+    <string name="fog">Fog</string>
     <string name="sand">Mist</string>
     <string name="dust">Mist</string>
     <string name="volcanic_ash">Mist</string>

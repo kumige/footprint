@@ -7,8 +7,11 @@ import android.opengl.Visibility
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.room.Room
@@ -23,6 +26,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var data: MutableList<History>
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (App.isNightModeEnabled()) {
+            setTheme(R.style.DarkTheme)
+        } else setTheme(R.style.AppTheme)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -62,10 +69,26 @@ class MainActivity : AppCompatActivity() {
         checkPermission()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        if (App.isNightModeEnabled()) {
+            menuInflater.inflate(R.menu.icon_theme_light, menu)
+        } else menuInflater.inflate(R.menu.icon_theme_dark, menu)
+        return true
+    }
+
     // Opens an activity where user sets the name for the first time
     private fun addName() {
         val intent = Intent(this, NameAddingActivity::class.java)
         startActivity(intent)
+    }
+
+    fun toggleTheme(item: MenuItem): Boolean {
+        App.setIsNightModeEnabled(!App.isNightModeEnabled())
+        finish()
+        overridePendingTransition(0, 0)
+        startActivity(intent)
+        overridePendingTransition(0, 0)
+        return true
     }
 
     override fun onResume() {
