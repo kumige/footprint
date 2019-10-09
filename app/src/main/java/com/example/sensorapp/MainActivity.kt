@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(
                     applicationContext,
-                    "You must give access to your location for this app to work correctly.",
+                    getString(R.string.main_noLocationAccessToast),
                     Toast.LENGTH_LONG
                 ).show()
             }

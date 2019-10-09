@@ -22,6 +22,21 @@
     <string name="cd_profile">Profile logo</string>
     <string name="cd_arrow">Arrow image</string>
 
+    <!-- Main activity -->
+    <string name="main_noLocationAccessToast">You must give access to your location for this app to work correctly.</string>
+
+    <!-- Profile -->
+    <string name="editText_nameEnter">Enter your new name here</string>
+    <string name="profile_btn_close">close</string>
+    <string name="profile_btn_confirm">Confirm</string>
+    <string name="profile_emptyNameToast">Name can not be empty.</string>
+    <string name="profile_title">Profile</string>
+
+    <!-- Profile settings -->
+    <string name="profileSettings_settingTitle">Profile settings</string>
+    <string name="profileSettings_changeUsernameTitle">Change username</string>
+
+
     <!-- Weather fragment -->
     <string name="weather_noLocationErrorToast">You must give access to your location for this app to work correctly.</string>
     <string name="weather_noLocationError">You must give access to your location to show the weather.</string>
@@ -29,8 +44,8 @@
     <string name="weather_errorIconContentDescription">Error icon</string>
     <string name="weather_refreshIconContentDescription">Refresh icon</string>
     <string name="weather_weatherImageContentDescription">Image representing current weather</string>
-    <string name="weather_invalidWeatherError">Error: Could not get weather</string>
-    <string name="weather_loadError">Error: Could not load weather</string>
+    <string name="weather_invalidWeatherError">Error: Could not get weather.</string>
+    <string name="weather_loadError">Error: Could not load weather.</string>
 
     <!-- Weathers -->
     <string name="thunderstorm_with_light_rain">Thunderstorm</string>
@@ -98,7 +113,7 @@
     <string name="name_enterName">Enter your name here</string>
     <string name="name_enterNameAutofillHint">username</string>
     <string name="name_btn_enter">Enter</string>
-    <string name="name_errorMsg">Name can not be empty</string>
+    <string name="name_errorMsg">Name can not be empty.</string>
     <string name="name_LogoContentDescription">App logo</string>
 
 </resources>

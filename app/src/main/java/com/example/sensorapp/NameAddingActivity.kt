@@ -20,12 +20,12 @@ class NameAddingActivity : AppCompatActivity() {
         btn_addName.setOnClickListener{ addName()}
     }
 
+    // Adds username
     fun addName(){
         var name = editText_name.text.toString()
         name = name.trim()
-        Log.d("Name","$name")
+
         if(!name.isBlank()){
-            Log.d("Name","$name")
             val db = Room.databaseBuilder(
                 this,
                 AppDatabase::class.java, "user.db"
@@ -40,6 +40,7 @@ class NameAddingActivity : AppCompatActivity() {
         }
     }
 
+    // Goes to Main activity and makes it unable to come back to this activity
     fun goMainActivity(){
         finish()
         val intent = Intent(this, MainActivity::class.java)
