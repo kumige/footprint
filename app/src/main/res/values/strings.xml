@@ -26,10 +26,10 @@
     <string name="main_noLocationAccessToast">You must give access to your location for this app to work correctly.</string>
 
     <!-- Profile -->
-    <string name="editText_nameEnter">Enter your new name here</string>
+    <string name="editText_nameEnter">Enter new username here</string>
     <string name="profile_btn_close">close</string>
     <string name="profile_btn_confirm">Confirm</string>
-    <string name="profile_emptyNameToast">Name can not be empty.</string>
+    <string name="profile_emptyNameToast">Username can not be empty.</string>
     <string name="profile_title">Profile</string>
 
     <!-- Profile settings -->
@@ -59,7 +59,7 @@
     <string name="thunderstorm_with_drizzle">Thunderstorm</string>
     <string name="thunderstorm_with_heavy_drizzle">Thunderstorm</string>
 
-    <string name="light_intensity_drizzle">Drizzle</string>
+    <string name="light_intensity_drizzle">Light Drizzle</string>
     <string name="drizzle">Drizzle</string>
     <string name="heavy_intensity_drizzle">Drizzle</string>
     <string name="drizzle_rain">Drizzle</string>
@@ -70,9 +70,9 @@
 
     <string name="light_rain">Light rain</string>
     <string name="moderate_rain">Rain</string>
-    <string name="heavy_intensity_rain">Rain</string>
-    <string name="very_heavy_rain">Rain</string>
-    <string name="extreme_rain">Rain</string>
+    <string name="heavy_intensity_rain">Heavy rain</string>
+    <string name="very_heavy_rain">Heavy rain</string>
+    <string name="extreme_rain">Heavy rain</string>
     <string name="freezing_rain">Rain</string>
     <string name="light_intensity_shower_rain">Rain</string>
     <string name="shower_rain">Rain</string>
@@ -104,16 +104,16 @@
 
     <string name="clear_sky">Clear sky</string>
 
-    <string name="few_clouds">Cloudy</string>
+    <string name="few_clouds">Partly cloudy</string>
     <string name="scattered_clouds">Cloudy</string>
     <string name="broken_clouds">Cloudy</string>
     <string name="overcast_clouds">Cloudy</string>
 
     <!-- Name adding strings -->
-    <string name="name_enterName">Enter your name here</string>
+    <string name="name_enterName">Enter your username here</string>
     <string name="name_enterNameAutofillHint">username</string>
     <string name="name_btn_enter">Enter</string>
-    <string name="name_errorMsg">Name can not be empty.</string>
+    <string name="name_errorMsg">Username can not be empty.</string>
     <string name="name_LogoContentDescription">App logo</string>
 
 </resources>
