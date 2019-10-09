@@ -18,6 +18,10 @@ class SingleRunActivity : AppCompatActivity() {
     private lateinit var map: MapView
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (App.isNightModeEnabled()) {
+            setTheme(R.style.DarkTheme)
+        } else setTheme(R.style.AppTheme)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_single_run)
 

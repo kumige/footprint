@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="150dp"
         android:layout_marginTop="16dp"
-        android:contentDescription="profile image"
+        android:contentDescription="@string/cd_profile"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -38,6 +38,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
+        app:cardBackgroundColor="?attr/backgroundCardColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -50,27 +51,23 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:background="@drawable/round_corner"
-            android:backgroundTint="#FFFFFF"
+            android:backgroundTint="?attr/backgroundCardColor"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/textView_previousRuns"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#FFFFFF"
-                android:backgroundTint="#FFFFFF"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
                 android:text="@string/past_runs"
-                android:textColor="#F2000000"
+                android:textColor="?attr/primaryTextColor"
                 android:textSize="24sp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#FFFFFF" />
+                android:layout_height="match_parent" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

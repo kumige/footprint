@@ -40,13 +40,16 @@ class MapActivity : AppCompatActivity(), TrackingHandler.AppReceiver {
     private var geoPoints = mutableListOf<GeoPoint>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (App.isNightModeEnabled()) {
+            setTheme(R.style.DarkTheme)
+        } else setTheme(R.style.AppTheme)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
 
         btn_startRun.setOnClickListener { startRun() }
         btn_stopRun.setOnClickListener { stopRun() }
 
-        // Map
         val ctx = applicationContext
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx))
 
@@ -68,7 +71,6 @@ class MapActivity : AppCompatActivity(), TrackingHandler.AppReceiver {
                     //Remove old marker
                     map.overlays.clear()
                     map.invalidate()
-                    Log.d("dbg", "marker removed")
                 }
                 val line = Polyline()
                 line.setPoints(geoPoints)
@@ -148,6 +150,7 @@ class MapActivity : AppCompatActivity(), TrackingHandler.AppReceiver {
         btn_stopRun.visibility = Button.GONE
         val intent = Intent(this, NavigationService::class.java)
         stopService(intent)
+        onBackPressed()
     }
 
     override fun onBackPressed() {

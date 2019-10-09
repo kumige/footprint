@@ -11,7 +11,7 @@
         android:id="@+id/textView_date"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textColor="#F2000000"
+        android:textColor="?attr/primaryTextColor"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="#F2000000"
+            android:textColor="?attr/primaryTextColor"
             android:textSize="28sp" />
 
         <TextView
@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textAlignment="textEnd"
-            android:textColor="#F2000000"
+            android:textColor="?attr/primaryTextColor"
             android:textSize="28sp" />
     </LinearLayout>
 
