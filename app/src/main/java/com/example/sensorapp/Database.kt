@@ -74,6 +74,9 @@ interface dao {
     @Query("DELETE FROM history WHERE id = :historyId")
     fun deleteFromHistory(historyId: Int)
 
+    @Query("UPDATE user SET user=:name WHERE id=1")
+    fun updateUsername(name: String)
+
     //Dev only
     @Query("SELECT * FROM user")
     fun getUser(): List<User>
