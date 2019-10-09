@@ -50,7 +50,6 @@ class MainRecyclerAdapter(private val history: List<History>) :
 
         @SuppressLint("SetTextI18n")
         fun bindItem(historyItem: History) {
-            Log.d("dbg", "$historyItem")
             historyRun = historyItem
             val date = historyItem.startTime.split("T")
             val time = date[1].slice(0..4)
@@ -62,14 +61,10 @@ class MainRecyclerAdapter(private val history: List<History>) :
         }
 
         override fun onClick(v: View) {
-            Log.d("dbg", "history item clicked")
-
-
             val context = itemView.context
             val showHistoryIntent = Intent(context, SingleRunActivity::class.java)
             showHistoryIntent.putExtra(RUN_KEY, Utils().historyToJsonString(historyRun))
             context.startActivity(showHistoryIntent)
-
         }
 
         companion object {

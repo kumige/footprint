@@ -39,28 +39,21 @@ class HistoryRecyclerAdapter(
 
     override fun getItemCount() = history.size
 
+    // Delete item from list and update recycler view
     private fun onItemDelete(position: Int) {
-        Log.d("dbg", "$position")
-        for (item in history) {
-            Log.d("dbg", "before: ${item.id}")
-        }
-
-        val ints = intArrayOf()
+        val ints = mutableListOf<Int>()
         var i = 0
-        while (i <= history.size) {
-            ints[i] = i
+        while (history.size > i) {
+            ints.add(i)
             i++
-            Log.d("dbg", "$ints")
         }
         val reversedInts = ints.reversed()
-        Log.d("dbg", "item to be deleted: ${reversedInts[position]}")
         history.removeAt(reversedInts[position])
-
-        for (item in history) {
-            Log.d("dbg", "after: ${item.id}")
-
+        doAsync {
+            uiThread {
+                notifyDataSetChanged()
+            }
         }
-        notifyDataSetChanged()
     }
 
 
@@ -90,13 +83,10 @@ class HistoryRecyclerAdapter(
         }
 
         override fun onClick(v: View) {
-            Log.d("dbg", "history item clicked")
-
             val context = itemView.context
             val showHistoryIntent = Intent(context, SingleRunActivity::class.java)
             showHistoryIntent.putExtra(RUN_KEY, Utils().historyToJsonString(historyRun))
             context.startActivity(showHistoryIntent)
-
         }
 
         override fun onLongClick(v: View?): Boolean {
