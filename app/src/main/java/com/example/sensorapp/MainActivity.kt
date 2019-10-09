@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
             val users = db.dao().getUser()
             Log.d("asd", "users: $users")
             //db.dao().deleteUserName(User(16, "d"))
-            Log.d("asd", user)
+            Log.d("asd", "user: $user")
             if (user == null) {
                 addName()
             }
