@@ -1,5 +1,6 @@
 package com.example.sensorapp
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
@@ -26,7 +27,9 @@ import android.location.Geocoder
 import android.os.Build
 import android.view.animation.AnimationUtils
 import android.widget.*
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import org.jetbrains.anko.activityManager
 import org.jetbrains.anko.custom.async
 
 
@@ -67,25 +70,28 @@ class WeatherFragment : Fragment() {
         return view
     }
 
+    // Checks if location permissions have been given
     private fun locationCheck(){
-        if (Utils().checkLocationPermission(activity!!.applicationContext)) getLocation()
-        else {
-            Toast.makeText(
-                activity!!.applicationContext,
-                getString(R.string.weather_noLocationErrorToast),
-                Toast.LENGTH_LONG
-            ).show()
-            errorLayout()
-            errorMsg.text = getString(R.string.weather_noLocationError)
+            if (Utils().checkLocationPermission(activity!!.applicationContext)) getLocation()
+            else {
+                Toast.makeText(
+                    activity!!.applicationContext,
+                    getString(R.string.weather_noLocationErrorToast),
+                    Toast.LENGTH_LONG
+                ).show()
+                errorLayout()
+                errorMsg.text = getString(R.string.weather_noLocationError)
+            }
         }
-    }
 
+    // Refreshes weather
     private fun refreshWeather() {
         weatherRefresh.startAnimation(AnimationUtils.loadAnimation(thiscontext, R.anim.anim))
         if (Utils().checkLocationPermission(activity!!.applicationContext)) {
             getLocation()
         }
     }
+
 
     private fun getLocation() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity as Activity)
@@ -95,7 +101,7 @@ class WeatherFragment : Fragment() {
                 longitude = task.result?.longitude
                 Log.d("dbg", "fusedLocationClient $latitude, $longitude")
 
-                // Gets city/country
+                // Gets current city
                 val geocoder = Geocoder(thiscontext, Locale.getDefault())
                 var addresses = listOf<Any>()
                 addresses = geocoder.getFromLocation(latitude!!, longitude!!, 1)
@@ -124,6 +130,7 @@ class WeatherFragment : Fragment() {
             }
         }
 
+        // Connects to openweathermap's API
         override fun doInBackground(vararg params: String?): String? {
             var response: String?
             try {
@@ -140,6 +147,7 @@ class WeatherFragment : Fragment() {
             return response
         }
 
+        // Handles all data from the openweathermap's API
         override fun onPostExecute(result: String?) {
             super.onPostExecute(result)
             try {

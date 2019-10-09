@@ -97,7 +97,6 @@ class MainActivity : AppCompatActivity() {
                     arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                     PERMISSON_CODE
                 )
-
             }
         }
     }
