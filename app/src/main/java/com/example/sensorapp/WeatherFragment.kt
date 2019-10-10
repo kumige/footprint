@@ -65,9 +65,16 @@ class WeatherFragment : Fragment() {
         errorIcon = view.findViewById(R.id.errorImg)
         weatherBackground = view.findViewById(R.id.weather_background)
         weatherRefresh = view.findViewById(R.id.weather_refresh)
-        weatherRefresh.setOnClickListener { refreshWeather() }
+        weatherRefresh.setOnClickListener {
+            weatherRefresh.startAnimation(AnimationUtils.loadAnimation(thiscontext, R.anim.anim))
+            refreshWeather() }
         locationCheck()
         return view
+    }
+
+    override fun onResume(){
+        super.onResume()
+        refreshWeather()
     }
 
     // Checks if location permissions have been given
@@ -86,7 +93,6 @@ class WeatherFragment : Fragment() {
 
     // Refreshes weather
     private fun refreshWeather() {
-        weatherRefresh.startAnimation(AnimationUtils.loadAnimation(thiscontext, R.anim.anim))
         if (Utils().checkLocationPermission(activity!!.applicationContext)) {
             getLocation()
         }
@@ -99,13 +105,11 @@ class WeatherFragment : Fragment() {
             fusedLocationClient.lastLocation.addOnCompleteListener { task ->
                 latitude = task.result?.latitude
                 longitude = task.result?.longitude
-                Log.d("dbg", "fusedLocationClient $latitude, $longitude")
 
                 // Gets current city
                 val geocoder = Geocoder(thiscontext, Locale.getDefault())
                 var addresses = listOf<Any>()
                 addresses = geocoder.getFromLocation(latitude!!, longitude!!, 1)
-                Log.d("dbg", "address $addresses")
 
                 cityName = addresses.get(0).getLocality()
 
@@ -134,15 +138,12 @@ class WeatherFragment : Fragment() {
         override fun doInBackground(vararg params: String?): String? {
             var response: String?
             try {
-                Log.d("dbg", "$latitude, $longitude")
                 response =
                     URL("https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&units=metric&appid=$apiKey").readText(
                         Charsets.UTF_8
                     )
-                Log.d("dbg", "resp $response")
             } catch (e: Exception) {
                 response = null
-                Log.d("dbg", "$e")
             }
             return response
         }
@@ -157,11 +158,6 @@ class WeatherFragment : Fragment() {
                 val sys = jsonObj.getJSONObject("sys")
                 val weather = jsonObj.getJSONArray("weather").getJSONObject(0)
 
-                val updatedAt: Long = jsonObj.getLong("dt")
-                val updatedAtText =
-                    "Updated at: " + SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.ENGLISH).format(
-                        Date(updatedAt * 1000)
-                    )
                 val weatherDescription = weather.getString("description")
                 val weatherSimple = weather.getString("main")
 
@@ -169,10 +165,6 @@ class WeatherFragment : Fragment() {
                 val tempINT = main.getString("temp")
                 val tempRounded = BigDecimal(tempINT).setScale(0, RoundingMode.HALF_EVEN).toString()
                 val tempString = "$tempRounded°C"
-
-                Log.d("weather", "tempint: ${tempINT}")
-                Log.d("weather", "temprounded: ${tempRounded}")
-                Log.d("weather", "${weatherSimple}, ${weatherDescription}")
 
                 // Sets temperature, city and background
                 textView_temperature.text = tempString
@@ -190,9 +182,7 @@ class WeatherFragment : Fragment() {
                 newWeatherDescription = newWeatherDescription.replace("\\s".toRegex(), "_")
                 newWeatherDescription = newWeatherDescription.replace("/", "")
                 newWeatherDescription = newWeatherDescription.toLowerCase()
-                Log.d("weather", "weather name: ${newWeatherDescription}")
                 var string = getStringWithResKey(newWeatherDescription)
-                Log.d("weather", "id: ${string}")
                 textView_weather.text = string
             } catch (e: Exception) {
                 errorLayout()
@@ -220,109 +210,91 @@ class WeatherFragment : Fragment() {
             "Thunderstorm" -> {
                 weather_icon.setImageResource(R.drawable.thunder)
                 weather_background.setBackgroundResource(R.drawable.weather_background_thunder)
-                Log.d("weather", "thunder")
             }
 
             "Drizzle" -> {
                 weather_icon.setImageResource(R.drawable.rain2)
                 weather_background.setBackgroundResource(R.drawable.weather_background_rain)
-                Log.d("weather", "tihkusade")
             }
 
             "Rain" -> {
                 weather_icon.setImageResource(R.drawable.rain2)
                 weather_background.setBackgroundResource(R.drawable.weather_background_rain)
-                Log.d("weather", "Rain")
             }
 
             "Snow" -> {
                 weather_icon.setImageResource(R.drawable.snow)
                 weather_background.setBackgroundResource(R.drawable.weather_background_snow)
-                Log.d("weather", "snow")
             }
 
             "Clear" -> {
                 weather_icon.setImageResource(R.drawable.sunny)
                 weather_background.setBackgroundResource(R.drawable.weather_background_sunny)
-                Log.d("weather", "aurinkoista")
             }
 
             "Clouds" -> {
                 if (weatherDesc == "few clouds") {
                     weather_icon.setImageResource(R.drawable.sun_n_cloud)
                     weather_background.setBackgroundResource(R.drawable.weather_background_sun_n_cloud)
-                    Log.d("weather", "cloudy")
                 } else {
                     weather_icon.setImageResource(R.drawable.cloudy)
                     weather_background.setBackgroundResource(R.drawable.weather_background_cloudy)
-                    Log.d("weather", "cloudy")
                 }
             }
 
             "Mist" -> {
                 weather_icon.setImageResource(R.drawable.misty)
                 weather_background.setBackgroundResource(R.drawable.weather_background_misty)
-                Log.d("weather", "MIST")
             }
 
             "Smoke" -> {
                 weather_icon.setImageResource(R.drawable.misty)
                 weather_background.setBackgroundResource(R.drawable.weather_background_misty)
-                Log.d("weather", "MIST")
             }
 
             "Haze" -> {
                 weather_icon.setImageResource(R.drawable.misty)
                 weather_background.setBackgroundResource(R.drawable.weather_background_misty)
-                Log.d("weather", "MIST")
             }
 
             "Dust" -> {
                 weather_icon.setImageResource(R.drawable.misty)
                 weather_background.setBackgroundResource(R.drawable.weather_background_misty)
-                Log.d("weather", "MIST")
             }
 
             "Fog" -> {
                 weather_icon.setImageResource(R.drawable.misty)
                 weather_background.setBackgroundResource(R.drawable.weather_background_misty)
-                Log.d("weather", "MIST")
             }
 
             "Sand" -> {
                 weather_icon.setImageResource(R.drawable.misty)
                 weather_background.setBackgroundResource(R.drawable.weather_background_misty)
-                Log.d("weather", "MIST")
             }
 
             "Dust" -> {
                 weather_icon.setImageResource(R.drawable.misty)
                 weather_background.setBackgroundResource(R.drawable.weather_background_misty)
-                Log.d("weather", "MIST")
             }
 
             "Ash" -> {
                 weather_icon.setImageResource(R.drawable.misty)
                 weather_background.setBackgroundResource(R.drawable.weather_background_misty)
-                Log.d("weather", "MIST")
             }
 
             "Squall" -> {
                 weather_icon.setImageResource(R.drawable.misty)
                 weather_background.setBackgroundResource(R.drawable.weather_background_misty)
-                Log.d("weather", "MIST")
             }
 
             "Tornado" -> {
                 weather_icon.setImageResource(R.drawable.misty)
                 weather_background.setBackgroundResource(R.drawable.weather_background_misty)
-                Log.d("weather", "MIST")
             }
 
             else -> {
                 errorLayout()
                 errorMsg.text = getString(R.string.weather_invalidWeatherError)
-                Log.d("weather", "Invalid weather")
             }
         }
     }
