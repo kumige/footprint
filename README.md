@@ -16,3 +16,5 @@ A simple run tracking app.
 2. build with android studio to your android phone
 
 *footprints target API level is 26, so make sure your phone is running Android Oreo*
+
+![screenshot](screenshot.jpg)
