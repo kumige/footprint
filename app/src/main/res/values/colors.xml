@@ -7,5 +7,5 @@
     <color name="colorWhite">#F7F7F7</color>
     <color name="colorText">#F2000000</color>
     <color name="colorDarkBackground">#121212</color>
-    <color name="colorDarkElevation">#F23A3A3A</color>
+    <color name="colorDarkElevation">#3A3A3A</color>
 </resources>
