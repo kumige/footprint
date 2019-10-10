@@ -41,12 +41,15 @@ class ProfileActivity : AppCompatActivity() {
         val actionbar = supportActionBar
         actionbar!!.title = getString(R.string.profile_title)
         actionbar.setDisplayHomeAsUpEnabled(true)
-        actionbar.setDisplayUseLogoEnabled(true)
-        actionbar.setIcon(R.drawable.brightness_4)
 
         linearLayoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = linearLayoutManager
-        recyclerView.addItemDecoration(DividerItemDecoration(applicationContext, DividerItemDecoration.VERTICAL))
+        recyclerView.addItemDecoration(
+            DividerItemDecoration(
+                applicationContext,
+                DividerItemDecoration.VERTICAL
+            )
+        )
     }
 
     private fun loadProfileData() {
@@ -79,11 +82,14 @@ class ProfileActivity : AppCompatActivity() {
     // Handles action bar item clicks
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
-        val id = item.getItemId()
+        val id = item.itemId
 
         if (id == R.id.action_menu1) {
-            val inflater: LayoutInflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            val view = inflater.inflate(R.layout.name_change_popup,null)
+
+
+            val inflater: LayoutInflater =
+                getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val view = inflater.inflate(R.layout.name_change_popup, null)
             val popupWindow = PopupWindow(
                 view,
                 LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -96,7 +102,7 @@ class ProfileActivity : AppCompatActivity() {
                 popupWindow.elevation = 10.0F
             }
 
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 // Create a new slide animation for popup window enter transition
                 val slideIn = Slide()
                 slideIn.slideEdge = Gravity.TOP
@@ -110,19 +116,19 @@ class ProfileActivity : AppCompatActivity() {
 
             val buttonPopupCancel = view.findViewById<Button>(R.id.btn_nameChange_popup_cancel)
             val buttonPopupConfirm = view.findViewById<Button>(R.id.btn_nameChange_popup_confirm)
-            var username = view.findViewById<EditText>(R.id.editText_newUsername)
+            val username = view.findViewById<EditText>(R.id.editText_newUsername)
 
             // Closes popup
-            buttonPopupCancel.setOnClickListener{
+            buttonPopupCancel.setOnClickListener {
                 popupWindow.dismiss()
             }
 
             // Sets new username and makes sure it's not blank
-            buttonPopupConfirm.setOnClickListener{
-               var newUsername = username.text.toString()
+            buttonPopupConfirm.setOnClickListener {
+                var newUsername = username.text.toString()
                 newUsername = newUsername.trim()
 
-                if(!newUsername.isBlank()) {
+                if (!newUsername.isBlank()) {
                     val db = Room.databaseBuilder(
                         this,
                         AppDatabase::class.java, "user.db"
