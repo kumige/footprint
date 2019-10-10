@@ -49,6 +49,7 @@ class WeatherFragment : Fragment() {
     lateinit var weatherBackground: ImageView
 
     lateinit var cityName: String
+    var nightMode: Boolean = App.isNightModeEnabled()
 
 
     override fun onCreateView(
@@ -306,6 +307,10 @@ class WeatherFragment : Fragment() {
         weatherBackground.visibility = View.GONE
         errorMsg.visibility = View.VISIBLE
         errorIcon.visibility = View.VISIBLE
-        weatherRefresh.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP)
+        if(!nightMode) {
+            weatherRefresh.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP)
+        } else {
+            weatherRefresh.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
+        }
     }
 }
