@@ -7,7 +7,7 @@
         android:orderInCategory="100"
         android:title="@string/profileSettings_settingTitle"
         android:icon="@drawable/ic_settings_white_24dp"
-        app:showAsAction="always" >
+        app:showAsAction="always">
         <menu>
             <item android:id="@+id/action_menu1"
                 android:title="@string/profileSettings_changeUsernameTitle" />

@@ -1,6 +1,7 @@
 package com.example.sensorapp
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.transition.Slide
@@ -9,6 +10,7 @@ import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.toColor
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Dao
@@ -82,6 +84,7 @@ class ProfileActivity : AppCompatActivity() {
         val id = item.getItemId()
 
         if (id == R.id.action_menu1) {
+            
             val inflater: LayoutInflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             val view = inflater.inflate(R.layout.name_change_popup,null)
             val popupWindow = PopupWindow(
