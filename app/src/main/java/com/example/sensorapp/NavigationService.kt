@@ -12,6 +12,8 @@ import android.speech.tts.Voice
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.room.Room
+import com.example.sensorapp.activities.MapActivity
+import com.example.sensorapp.activities.PRIORITY_HIGH_ACCURACY
 import com.google.android.gms.location.*
 import org.jetbrains.anko.doAsync
 import org.osmdroid.util.GeoPoint
@@ -58,12 +60,9 @@ class NavigationService : Service(), TextToSpeech.OnInitListener {
         if (status == TextToSpeech.SUCCESS) {
             val voiceGender = HashSet<String>()
             voiceGender.add("female")
-            //Finnish TTS voice
-            //val newVoice = Voice("fi-FI-language", Locale("fi", "FI"), 400,200,false, voiceGender)
 
             // English TTS voice
             val newVoice = Voice("en-US-language", Locale("en", "US"), 400, 200, false, voiceGender)
-            //tts.setVoice(newVoice)
             tts.setSpeechRate(0.6f)
             tts.voice = newVoice
 
@@ -88,8 +87,8 @@ class NavigationService : Service(), TextToSpeech.OnInitListener {
 
         // Create notification
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Tracking location")
-            .setContentText("run faster")
+            .setContentTitle("Tracking your route")
+            .setContentText("Ongoing run")
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setSmallIcon(R.drawable.logo)

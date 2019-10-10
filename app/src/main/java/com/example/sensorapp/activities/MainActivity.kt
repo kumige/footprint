@@ -1,9 +1,8 @@
-package com.example.sensorapp
+package com.example.sensorapp.activities
 
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.opengl.Visibility
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -11,10 +10,10 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.room.Room
+import com.example.sensorapp.*
 import com.example.sensorapp.fragments.HistoryFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.doAsync

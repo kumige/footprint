@@ -1,8 +1,7 @@
-package com.example.sensorapp
+package com.example.sensorapp.adapters
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -11,10 +10,11 @@ import android.widget.PopupMenu
 import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
+import com.example.sensorapp.*
+import com.example.sensorapp.activities.SingleRunActivity
 import kotlinx.android.synthetic.main.rv_history_row.view.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
-import kotlin.coroutines.coroutineContext
 
 class HistoryRecyclerAdapter(
     private var history: MutableList<History>
@@ -28,7 +28,7 @@ class HistoryRecyclerAdapter(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): HistoryRecyclerAdapter.ItemHolder {
+    ): ItemHolder {
         val inflatedView = parent.inflate(R.layout.rv_history_row, false)
         return ItemHolder(inflatedView, this)
     }
@@ -79,7 +79,8 @@ class HistoryRecyclerAdapter(
             view.textView_date.text = "${date[0]} $time"
             view.textView_distance.text = "${historyItem.distance}m"
             view.textView_time.text =
-                Utils().formatTimer(historyItem.duration, FORMAT_TIMER_PROFILE)
+                Utils()
+                    .formatTimer(historyItem.duration, FORMAT_TIMER_PROFILE)
         }
 
         override fun onClick(v: View) {

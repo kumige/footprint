@@ -1,9 +1,7 @@
-package com.example.sensorapp
+package com.example.sensorapp.fragments
 
-import android.Manifest
 import android.app.Activity
 import android.content.Context
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.AsyncTask
@@ -21,16 +19,14 @@ import org.json.JSONObject
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.net.URL
-import java.text.SimpleDateFormat
 import java.util.*
 import android.location.Geocoder
-import android.os.Build
 import android.view.animation.AnimationUtils
 import android.widget.*
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import org.jetbrains.anko.activityManager
-import org.jetbrains.anko.custom.async
+import com.example.sensorapp.App
+import com.example.sensorapp.BuildConfig
+import com.example.sensorapp.R
+import com.example.sensorapp.Utils
 
 
 class WeatherFragment : Fragment() {
@@ -67,7 +63,9 @@ class WeatherFragment : Fragment() {
         weatherBackground = view.findViewById(R.id.weather_background)
         weatherRefresh = view.findViewById(R.id.weather_refresh)
         weatherRefresh.setOnClickListener {
-            weatherRefresh.startAnimation(AnimationUtils.loadAnimation(thiscontext, R.anim.anim))
+            weatherRefresh.startAnimation(AnimationUtils.loadAnimation(thiscontext,
+                R.anim.anim
+            ))
             refreshWeather() }
         locationCheck()
         return view

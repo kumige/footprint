@@ -2,7 +2,6 @@ package com.example.sensorapp.adapters
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Typeface
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +9,7 @@ import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sensorapp.*
-import kotlinx.android.synthetic.main.fragment_history.view.*
+import com.example.sensorapp.activities.SingleRunActivity
 import kotlinx.android.synthetic.main.rv_history_row.view.*
 
 class MainRecyclerAdapter(private val history: List<History>) :

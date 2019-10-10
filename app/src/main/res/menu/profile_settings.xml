@@ -3,9 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_menu1"
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/profileSettings_settingTitle"
         android:icon="@drawable/ic_settings_white_24dp"
-        android:onClick="showPopup"
-        android:title="@string/profileSettings_changeUsernameTitle" />
-
+        app:showAsAction="always">
+        <menu>
+            <item android:id="@+id/action_menu1"
+                android:title="@string/profileSettings_changeUsernameTitle" />
+        </menu>
+    </item>
 </menu>

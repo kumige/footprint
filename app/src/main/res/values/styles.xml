@@ -22,6 +22,9 @@
         <item name="backgroundColor">@color/colorDarkBackground</item>
         <item name="android:fontFamily">@font/nunito</item>
         <item name="fontFamily">@font/nunito</item>
+
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:itemBackground">@color/colorDarkBackground</item>
     </style>
 
     <style name="AppTheme.NoActionBar" parent="AppTheme">

@@ -1,33 +1,23 @@
-package com.example.sensorapp
+package com.example.sensorapp.activities
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.location.Location
 import android.os.*
 import android.preference.PreferenceManager
-import android.util.Log
-import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import com.example.sensorapp.*
+import com.example.sensorapp.R
 import com.google.android.gms.location.*
 import kotlinx.android.synthetic.main.activity_map.*
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
-import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
 import java.math.BigDecimal
 import java.math.RoundingMode
-import kotlin.math.round
 
 const val PERMISSON_CODE = 124
 const val PRIORITY_HIGH_ACCURACY = 100
@@ -83,7 +73,8 @@ class MapActivity : AppCompatActivity(), TrackingHandler.AppReceiver {
             TIMER_UPDATE -> {
 
                 val time = message.obj as Int
-                textView_time.text = Utils().formatTimer(time, FORMAT_TIMER_CLOCK)
+                textView_time.text = Utils()
+                    .formatTimer(time, FORMAT_TIMER_CLOCK)
             }
             DISTANCE_UPDATE -> {
                 val distance = message.obj as Int

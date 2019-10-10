@@ -1,24 +1,21 @@
-package com.example.sensorapp
+package com.example.sensorapp.activities
 
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.transition.Slide
 import android.transition.TransitionManager
-import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.room.Dao
 import androidx.room.Room
+import com.example.sensorapp.*
+import com.example.sensorapp.adapters.HistoryRecyclerAdapter
 import kotlinx.android.synthetic.main.activity_profile.*
-import kotlinx.android.synthetic.main.name_change_popup.*
-import kotlinx.android.synthetic.main.rv_history_row.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
-import java.time.LocalDateTime
 
 class ProfileActivity : AppCompatActivity() {
 
@@ -85,11 +82,10 @@ class ProfileActivity : AppCompatActivity() {
         val id = item.itemId
 
         if (id == R.id.action_menu1) {
-
-
             val inflater: LayoutInflater =
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             val view = inflater.inflate(R.layout.name_change_popup, null)
+
             val popupWindow = PopupWindow(
                 view,
                 LinearLayout.LayoutParams.WRAP_CONTENT,

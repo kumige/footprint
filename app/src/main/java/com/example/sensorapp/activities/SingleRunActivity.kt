@@ -1,9 +1,9 @@
-package com.example.sensorapp
+package com.example.sensorapp.activities
 
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.example.sensorapp.*
 import kotlinx.android.synthetic.main.activity_single_run.*
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
